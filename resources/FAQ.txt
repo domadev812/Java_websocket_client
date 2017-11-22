@@ -1,0 +1,27 @@
+FAQ (Frequently Asked Questions)
+
+
+Copyright ©2017. 
+Board of Directors of LEEPS Inc.
+All Rights Reserved.
+
+
+Last modified: April 30, 2017
+
+
+Welcome to LEEPS Inc.
+How does LEEPS Inc. protect my privacy and keep my information secure?
+We know security and privacy are important to you – and they are important to us, too. We make it a priority to provide strong security and give you confidence that your information is safe and accessible when you need it.
+
+We’re constantly working to ensure strong security, protect your privacy, and make LEEPS Inc. even more effective and efficient for you.
+
+You can learn more about safety and security online, including how to protect your vital signs, at the LEEPS Inc. Help Page.
+
+How can I remove information about myself from LEEPS Inc.'s platform?
+LEEPS Inc.’s platforms are privately viewed results by organizations and/or companies that you are a member of. Your personal profile can’t be removed unless the organization and/or companies authorize the deletion of your private information. If you want to remove something from the platform, you should contact the administrator in charge of the organization and/or company that you are employed by. Once the content has been removed and LEEPS Inc. has noted the update, the information will no longer appear in LEEPS Inc.’s search results. If you have an urgent removal request, you can also visit our Help Page for more information.
+
+Are my vital signs sent to LEEPS Inc.’s server when I turn off LEEPS Inc.’s mobile app?
+No. When you choose to turn off the LEEPS Inc.’s mobile app then your data will not be processed and stored on LEEPS Inc.’s servers. LEEPS Inc. is not responsible for whether or not you as a user are keeping the mobile app on or off.
+
+Are my vital signs sent to LEEPS Inc.’s server after I turn off the wearable device that is connected to LEEPS Inc.’s mobile app?
+No. When you choose to turn off the wearable device that is connected to LEEPS Inc.’s mobile app then your data will not be processed and stored on LEEPS Inc.’s servers. LEEPS Inc. is not responsible for whether or not you as a user are keeping the wearable device connected to LEEPS Inc.’s mobile app on or off.

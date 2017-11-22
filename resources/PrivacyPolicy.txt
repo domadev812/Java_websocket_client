@@ -1,0 +1,198 @@
+
+
+Copyright ©2017. 
+Board of Directors of LEEPS Inc.
+All Rights Reserved.
+
+
+Last modified: April 30, 2017
+
+
+Welcome to LEEPS Inc.
+When you use LEEPS Inc. services, you trust us with your information. This Privacy Policy is meant to help you understand what data we collect, why we collect it, and what we do with it. This is important; we hope you will take time to read it carefully.
+
+There are many different ways you can use our services – to search for and share information, to communicate with other people or to create new content. When you share information with us, for example by creating an LEEPS Inc. Account, we can make those services even better – to show you more relevant search results and ads, to help you connect with people or to make sharing with others quicker and easier. As you use our services, we want you to be clear how we’re using information and the ways in which you can protect your privacy.
+
+Our Privacy Policy explains:
+   • What information we collect and why we collect it.
+   • How we use that information.
+   • The choices we offer, including how to access and update information.
+
+We’ve tried to keep it as simple as possible, but if you’re not familiar with terms like IP addresses, pixel tags and browsers, then read about these key terms first. Your privacy matters to LEEPS Inc. so whether you are new to LEEPS Inc. or a long-time user, please do take the time to get to know our practices – and if you have any questions contact us.
+
+Information We Collect
+We collect information to provide better services to all of our users – from figuring out basic vital signatures like your heart rate, temperature, perspiration and how much you are moving. We also collect information from your profile registration from the mobile app such as allergies and health conditions.
+
+We collect information in the following ways:
+   • Information you give us. For example, many of our services require you to sign up for an LEEPS Inc. Account. When you do, we’ll ask for personal information, like your name, email address, emergency contact number, allergies or health conditions to store with your Account. If you want to take full advantage of the sharing features with other first responders in the case of an emergency we offer, we might also ask you to create a visible LEEPS Inc. Profile, which may include your name and photo.
+   • Information we get from your use of our services. We collect information about the vital signs that you give off on a day-to-day basis, like when you are working at your desk, walking, driving, responding to a call, dealing with suspects, etc. This information includes:
+      o Device Information
+        We collect vital signs information (such as your personal profile, GPS location, heart rate, perspiration, skin temperature, ambient temperature and gyroscope). LEEPS Inc. may associate your personal identifiers or phone number with your LEEPS Inc. Account.
+      o Log Information
+        When you use, our services provided by LEEPS Inc., we automatically collect and store certain information in server logs. This includes:
+           • Details of how you used our service, such as your vital signs.
+           • Telephony log information like your phone number, device identification, time and date of push notifications, alarm triggers, duration of alarm triggers and GPS locations.
+           • Internet protocol address.
+           • Device event information such as crashes, system activity, hardware settings, browser type, browser language, the date and time of your profile edits.
+      o Location Information
+        When you use LEEPS Inc. services, we may collect and process information about your actual location. We use various technologies to determine location, including IP address, GPS, and other sensors that may, for example, provide LEEPS Inc. with information on nearby devices, Wi-Fi access points and cell towers.
+      o Unique Application Numbers
+        Certain services include a unique application number. This number and information about your installation (for example, the operating system type and application version number) may be sent to LEEPS Inc. when you install or uninstall that service or when that service periodically contacts our servers, such as for automatic updates.
+      o Local Storage
+        We may collect and store information (including personal information) on our internal servers and our cloud servers.
+
+Information we collect when you are signed in to LEEPS Inc., in addition to information we obtain about you from partners, may be associated with your LEEPS Inc. Account. When information is associated with your LEEPS Inc. Account, we treat it as personal information. For more information about how you can access, manage or delete information that is associated with your LEEPS Inc. Account, visit the Transparency and choice section of this policy.
+
+How We Use Information We Collect
+We use the information we collect from all of our services to provide, maintain, protect and improve them, to develop new ones, and to protect LEEPS Inc. and our users. We also use this information to provide you with a tailored virtual officer – by using machine learning to customize our platform to know your vital signs on a personalized level rather than measure you to the normal standards of medical association.
+
+We may use the personal information you provide for your LEEPS Inc. Profile across all of the services we offer that require an LEEPS Inc. Account. In addition, we may replace past personal information associated with your LEEPS Inc. Account so that you are represented consistently across all our services. If other users already have your email, or other information that identifies you, we may contact and show higher authorities your internally visible LEEPS Inc. profile information, such as your personal information and photo.
+
+When you contact LEEPS Inc., we keep a record of your communication to help solve any issues you might be facing. We may use your email address to inform you about our services, such as letting you know about upcoming changes or improvements.
+
+We use information collected from cookies and other technologies, like pixel tags, to improve your user experience and the overall quality of our services. One of the products we use to do this on our own services is LEEPS Inc. analytics. For example, by saving your language preferences, we’ll be able to have our services appear in the language you prefer.
+
+We will ask for your consent before using information for a purpose other than those that are set out in this Privacy Policy.
+
+LEEPS Inc. processes personal information on our servers within the country that you are living within. We may not process your personal information on a server located outside the country where you live.
+
+Transparency and Choice
+People have different privacy concerns. Our goal is to be clear about what information we collect, so that you can make meaningful choices about how it is used. For example, you can:
+   • Request a review of your LEEPS Inc. activity controls to decide what types of data, such as changes in your day-to-day vital signs, you would like to view within your Account when you use LEEPS Inc. services.
+   • Request a review of certain types of information tied to your LEEPS Inc. Account by using LEEPS Inc. customer service.
+
+Information You Share
+Our services do not let you share information with others. Remember that when you share information publicly, it may be index-able by search engines, but the information stored on LEEPS Inc. will be considered sensitive information and can only be viewed by the proper authorities having the proper clearance to do so.
+
+Accessing and Updating Your Personal Information
+Whenever you use our services, we aim to provide you with access to your personal information. If that information is wrong, we strive to give you ways to update it quickly or to delete it – unless we have to keep that information for legitimate medical or legal purposes. When updating your personal information, we may ask you to verify your identity before we can act on your request.
+
+We may reject requests that are unreasonably repetitive, require disproportionate technical effort (for example, developing a new system or fundamentally changing an existing practice), risk the privacy of others, or would be extremely impractical (for instance, requests concerning information residing on backup systems).
+
+Where we can provide information access and correction, we will do so for free, except where it would require a disproportionate effort. We aim to maintain our services in a manner that protects information from accidental or malicious destruction. Because of this, after you delete information from our services, we may not immediately delete residual copies from our active servers and may not remove information from our backup systems.
+
+Information We Share
+We do not share personal information with companies, organizations and individuals outside of LEEPS Inc. unless one of the following circumstances applies:
+   • With Your Consent
+     We will share personal information with government organizations or individuals outside of LEEPS Inc. when we have your consent to do so. We require opt-in consent for the sharing of any sensitive personal information.
+   • With Domain Administrators
+     If your LEEPS Inc. Account is managed for you by a domain administrator then your domain administrator will have access to your LEEPS Inc. Account information (including your email and other data). Your domain administrator may be able to:
+        o View statistics regarding your Account, like statistics regarding your vital signs, GPS locations and personal profile.
+        o Change your Account password.
+        o Suspend or terminate your Account access.
+        o Access or retain information stored as part of your Account.
+        o Receive your Account information in order to satisfy applicable law, regulation, legal process or enforceable governmental request.
+        o Restrict your ability to delete or edit information or privacy settings.
+     Please refer to your domain administrator’s privacy policy for more information.
+   • For External Processing
+     We do not provide personal information to affiliates or other trusted businesses or persons to process it for us. LEEPS Inc. feels that all information that we are processing and storing will be the determining factor between life and death of our users and will be handled in compliance with our Privacy Policy and any other appropriate confidentiality and security measures.
+   • For Legal Reasons
+     We will share personal information with companies, organizations or individuals outside of LEEPS Inc. if we have a good-faith belief that access, use, preservation or disclosure of the information is reasonably necessary to:
+        o Meet any applicable law, regulation, legal process or enforceable governmental request.
+        o Enforce applicable Terms of Service, including investigation of potential violations.
+        o Detect, prevent, or otherwise address fraud, security or technical issues.
+        o Protect against harm to the rights, property or safety of LEEPS Inc., our users or the public as required or permitted by law.
+
+We may share non-personally identifiable information publicly and with our partners – like publishers, advertisers or connected sites. For example, we may share information publicly to show trends about the general use of our services.
+
+If LEEPS Inc. is involved in a merger, acquisition or asset sale, we will continue to ensure the confidentiality of any personal information and give affected users notice before personal information is transferred or becomes subject to a different privacy policy.
+
+Information Security
+We work hard to protect LEEPS Inc. and our users from unauthorized access to or unauthorized alteration, disclosure or destruction of information we hold. In particular:
+   • We encrypt many of our services using SSL.
+   • We offer you two step verification when you access your LEEPS Inc. Account, and a Safe Browsing feature in LEEPS Inc.
+   • We review our information collection, storage and processing practices, including physical security measures, to guard against unauthorized access to systems.
+   • We restrict access to personal information to LEEPS Inc. employees who need to know that information in order to process it for us, and who are subject to strict contractual confidentiality obligations and may be disciplined or terminated if they fail to meet these obligations.
+
+When this Privacy Policy Applies
+Our Privacy Policy applies to all of the services offered by LEEPS Inc. on wireless and wearable devices, but excludes services that have separate privacy policies that do not incorporate this Privacy Policy.
+
+Our Privacy Policy does not apply to services offered by other companies or individuals, including products or sites that may be displayed to you in search results, sites that may include LEEPS Inc. services, or other sites linked from our services. Our Privacy Policy does not cover the information practices of other companies and organizations who advertise our services, and who may use cookies, pixel tags and other technologies to serve and offer relevant ads.
+
+Compliance and Cooperation with Regulatory Authorities
+We regularly review our compliance with our Privacy Policy. We also adhere to several self-regulatory frameworks, including the EU-US and Swiss-US Privacy Shield Frameworks. When we receive formal written complaints, we will contact the person who made the complaint to follow up. We work with the appropriate regulatory authorities, including local data protection authorities, to resolve any complaints regarding the transfer of personal data that we cannot resolve with our users directly.
+
+Changes
+Our Privacy Policy may change from time to time. We will not reduce your rights under this Privacy Policy without your explicit consent. We will post any privacy policy changes on this page and, if the changes are significant, we will provide a more prominent notice (including, for certain services, email notification of privacy policy changes). We will also keep prior versions of this Privacy Policy in an archive for your review.
+
+Specific Product Practices
+The following notices explain specific privacy practices with respect to certain LEEPS Inc. products and services that you may use:
+   • First Responder Cross Platform Integration System
+   • Smart Scheduler
+   • Smart Profiler
+   • Smart Armor
+   • Smart Glasses
+
+For more information about some of our most popular services, you can visit the LEEPS Inc. Product Privacy Guide.
+
+Other Useful Privacy and Security Related Materials
+Further useful privacy and security related materials can be found through LEEPS Inc.’s policies and principles pages, including:
+   • Information about our technologies and principles, which includes, among other things, more information on
+        o How we recognize false/positive triggers of vital signs. 
+   • The Privacy Checkup tool, which makes it easy to review your key privacy settings.
+   • LEEPS Inc.’s safety center, which provides information on how to stay safe and secure online.
+
+We keep your personal information private and safe — and put you in control.
+
+Self-Regulatory Frameworks
+Last modified: April 30, 2017
+
+As described in our Privacy Shield certification, we comply with the EU-US and Swiss-US Privacy Shield Frameworks as set forth by the US Department of Commerce regarding the collection, use and retention of personal information from European Union member countries and Switzerland, respectively. LEEPS Inc. and its wholly-owned US subsidiaries, has certified that it adheres to the Privacy Shield Principles. LEEPS Inc. remains responsible for any of your personal information that is shared under the Onward Transfer Principle with third parties for external processing on our behalf, as described in the “Information we share” section. To learn more about the Privacy Shield program, and to view LEEPS Inc.’s certification, please visit the Privacy Shield website.
+
+If you have an inquiry regarding our privacy practices in relation to our Privacy Shield certification, we encourage you to contact us. LEEPS Inc. is subject to the investigatory and enforcement powers of the US Federal Trade Commission (FTC). You may also refer a complaint to your local data protection authority and we will work with them to resolve your concern. In certain circumstances, the Privacy Shield Framework provides the right to invoke binding arbitration to resolve complaints not resolved by other means, as described in Annex I to the Privacy Shield Principles.
+
+LEEPS Inc. also adheres to industry standards for transparency and choice in online ads.
+
+Key Terms
+   • Affiliates
+   • Application data cache
+   • Browser web storage
+   • Device
+   • LEEPS Inc. Account
+   • HTTP Referrer
+   • IP address
+   • Non-personally identifiable information
+   • Personal information
+   • Sensitive Categories
+   • Sensitive personal information
+   • Server logs
+   • Unique device identifier
+
+Affiliates
+An affiliate is an entity that belongs to the LEEPS Inc. group of companies.
+
+Application Data Cache
+An application data cache is a data repository on a device. It can, for example, enable a web application to run without an internet connection and improve the performance of the application by enabling faster loading of content.
+
+Browser Web Storage
+Browser web storage enables websites to store data in a browser on a device. When used in "local storage" mode, it enables data to be stored across sessions (for example, so that the data are retrievable even after the browser has been closed and reopened). One technology that facilitates web storage is HTML 5.
+
+Device
+A device is a computer that can be used to access LEEPS Inc. services. For example, a device could be a desktop, tablet, smartphone and wearable technologies.
+
+LEEPS Inc. Account
+You may access some of our services by signing up for an LEEPS Inc. Account and providing us with some personal information (typically your name, email address and a password). This Account information will be used to authenticate you when you access LEEPS Inc. services and protect your Account from unauthorized access by others. You can edit or terminate your Account at any time through your LEEPS Inc. Account settings.
+
+IP address
+Every device connected to the Internet is assigned a number known as an Internet protocol (IP) address. These numbers are usually assigned in geographic blocks. An IP address can often be used to identify the location from which a device is connecting to the Internet.
+
+Non-Personally Identifiable Information
+This is information that is recorded about users so that it no longer reflects or references an individually identifiable user.
+
+Personal Information
+This is information which you provide to us which personally identifies you, such as your name, email address or billing information, or other data which can be reasonably linked to such information by LEEPS Inc., such as information we associate with your LEEPS Inc. Account.
+
+Sensitive Categories
+A personal profile may be sensitive if it relates to topics such as race, religion, sexual orientation, or health. When measuring your vital signs, we may associate an identifier from your personal profile, but not with sensitive categories unless otherwise directed depending on the situation that you are facing from time-to-time.
+
+Sensitive Personal Information
+This is a particular category of personal information relating to confidential medical facts, racial or ethnic origins, political or religious beliefs or sexuality.
+
+Server Logs
+Like most websites, our servers automatically record the page requests made when you visit our sites. These “server logs” typically include your web request, Internet Protocol address, browser type, browser language, the date and time of your request and one or more cookies that may uniquely identify your browser.
+
+Unique Device Identifier
+A unique device identifier (sometimes called a universally unique ID or UUID) is a string of characters that is incorporated into a device by its manufacturer and can be used to uniquely identify that device (for example an IMEI-number of a mobile phone). Different device identifiers vary in how permanent they are, whether they can be reset by users, and how they can be accessed. A given device may have several different unique device identifiers. Unique device identifiers can be used for various purposes, including security and fraud detection, syncing services such as a user’s email inbox, remembering the user’s preferences and providing relevant advertising.
+
+Updates: Privacy Policy
+We want to be as transparent as possible about the changes we make to our Privacy Policy. In this archive, you can see the previous versions of the policy. We’ve also included a page that compares the current policy to the previous version to make it as easy as possible to see what has changed.
