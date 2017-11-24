@@ -22,7 +22,6 @@ public class BaseDialog extends JDialog implements ActionListener{
     private MaterialButton btnBack;
     private JLabel lblTitle = new JLabel();
 
-    Font customFont;
     AppCommon common = new AppCommon();
     public BaseDialog() {
     }
@@ -47,10 +46,10 @@ public class BaseDialog extends JDialog implements ActionListener{
     private void initComponents() {
         topPane.setPreferredSize(new Dimension(this.getWidth(), 50));
         topPane.setLayout(null);
-        topPane.setBackground(new Color(45, 45, 45));
+        topPane.setBackground(AppWideStrings.primaryColor);
         centerPane.setBackground(new Color(240, 240, 240));
         bottomPane.setPreferredSize(new Dimension(this.getWidth(), 63));
-        bottomPane.setBackground(new Color(45, 45, 45));
+        bottomPane.setBackground(AppWideStrings.primaryColor);
 
         btnBack = new MaterialButton("BACK", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
         btnBack.setBounds(21, 8, 80, 36);

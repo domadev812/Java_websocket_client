@@ -18,8 +18,8 @@ import java.awt.event.ActionListener;
 public class LoginDialog extends BaseDialog implements ActionListener{
     JPanel contentPane = new JPanel();
     JPanel panBody = new JPanel();
-    JTextField txtEmail = new JTextField();
-    JPasswordField txtPassword = new JPasswordField();
+    JTextField txtEmail = new JTextField("a1@gmail.com");
+    JPasswordField txtPassword = new JPasswordField("test");
     JLabel lblForgotPassword = new JLabel("FORGOT PASSWORD");
     JLabel lblCreateAccount = new JLabel("CREATE ACCOUNT");
     JLabel lblErrorMessage = new JLabel("");
@@ -40,7 +40,7 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         super(width, height);
         setBackButtonVisible(false);
         setBottomHidden(false);
-        setTitle("Log In");
+        setTitle("LOG IN");
         setUndecorated(true);
         initComponents();
 
@@ -75,7 +75,6 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         gbl_panBody.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
         panBody.setLayout(gbl_panBody);
 
-        txtEmail = new JTextField();
         txtEmail.setToolTipText("");
         GridBagConstraints gbc_txtEmail = new GridBagConstraints();
         gbc_txtEmail.ipady = 30;
@@ -207,7 +206,6 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        dispose();
     }
 
     public void showErrorMessage(String errorMessage) {

@@ -3,6 +3,7 @@
  */
 package com.leeps.dispatcher.service;
 
+import com.leeps.dispatcher.common.AppWideStrings;
 import layout.TableLayout;
 
 import javax.imageio.ImageIO;
@@ -24,7 +25,7 @@ public class CustomizedUiWidgetsFactory {
     }
 
     public JButton makeClickableTextLink(String pText, Color pNonFocusForegroundColor,
-        Color pBackgroundColor) {
+                                         Color pBackgroundColor) {
 
         final JButton aJButton = new JButton();
         aJButton.setForeground(pNonFocusForegroundColor);
@@ -34,13 +35,13 @@ public class CustomizedUiWidgetsFactory {
         }
 
         final String notHoveredText = "<html><strong>" + pText
-            + "</strong></html>";
+                + "</strong></html>";
 
         final String hoveredText = "<html><strong><u>" + pText
-            + "</u></strong></html>";
+                + "</u></strong></html>";
 
         final String mousePressedText = "<html><strong><font color=\"#FF0000\"><u>" + pText
-            + "</u></font></strong></html>";
+                + "</u></font></strong></html>";
 
         aJButton.setText(notHoveredText);
         aJButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -79,13 +80,34 @@ public class CustomizedUiWidgetsFactory {
         return returnButton;
     }
 
+    public JLabel makeFam3IconLabel(
+            String pIconFilename, String pToolTipText, int pWidth, int pHeight) {
+        JLabel returnLabel = new JLabel(makeImageIcon(pIconFilename));
+        returnLabel.setPreferredSize(new Dimension(pWidth, pHeight));
+        returnLabel.setToolTipText(pToolTipText);
+        return returnLabel;
+    }
+
+    public JButton makeFam3IconButton(
+            String pIconFilename, String pToolTipText, int pWidth, int pHeight) {
+        JButton returnButton = new JButton();
+        returnButton.setIcon(makeImageIcon(pIconFilename));
+        returnButton.setPreferredSize(new Dimension(pWidth, pHeight));
+        returnButton.setToolTipText(pToolTipText);
+        return returnButton;
+    }
+
+    public ImageIcon makeImageIcon(String pIconFilename) {
+        return makeImageIcon(pIconFilename, AppWideStrings.appFam3IconsLoc);
+    }
+
     public ImageIcon makeImageIcon(String pIconFilename, String pDirectoryLoc) {
         BufferedImage iconBufferedImage = null;
         ImageIcon returnImageIcon = null;
 
         try {
             InputStream iconInputStream = getClass().getResourceAsStream(
-                pDirectoryLoc + pIconFilename);
+                    pDirectoryLoc + pIconFilename);
 
             if (iconInputStream != null) {
                 iconBufferedImage = ImageIO.read(iconInputStream);
@@ -94,18 +116,31 @@ public class CustomizedUiWidgetsFactory {
 
         } catch (IOException ex) {
             System.err.println("app - makeImageIcon. Could not read icon - "
-                + pIconFilename + ", " + ex.getMessage());
+                    + pIconFilename + ", " + ex.getMessage());
         }
         return returnImageIcon;
     }
 
+    public JPanel makeIndentedJPanel(int pLeftIndentPixels, JComponent pJComponent) {
+        JPanel returnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        if (pLeftIndentPixels > 0) {
+            returnPanel.add(Box.createHorizontalStrut(pLeftIndentPixels));
+        }
+        if (pJComponent != null) {
+            returnPanel.add(pJComponent);
+        }
+        returnPanel.setBorder(BorderFactory.createEmptyBorder());
+//        returnPanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
+        return returnPanel;
+    }
+
     public JPanel applyFontSizeAlignBgColorToLabel(
-        float pFontSize, JLabel pLabel, int pAlign, Color pBackgroundColor) {
+            float pFontSize, JLabel pLabel, int pAlign, Color pBackgroundColor) {
         double tableLayoutSpec[][] = new double[][] { {
-            TableLayout.PREFERRED, TableLayout.FILL,
-            TableLayout.PREFERRED, TableLayout.FILL, TableLayout.PREFERRED,
+                TableLayout.PREFERRED, TableLayout.FILL,
+                TableLayout.PREFERRED, TableLayout.FILL, TableLayout.PREFERRED,
         }, {
-            TableLayout.FILL
+                TableLayout.FILL
         } };
         pLabel.setFont(pLabel.getFont().deriveFont(pFontSize));
         JPanel labelInPanel = new JPanel(new GridLayout(0, 1));
@@ -127,7 +162,7 @@ public class CustomizedUiWidgetsFactory {
     }
 
     public JTextArea makeWordWrapTextArea(int pRows, int pColumns,
-        String pTextString, int fontSize) {
+                                          String pTextString, int fontSize) {
 
         JTextArea returnTextArea = new JTextArea(pRows, pColumns);
         returnTextArea.setFont(new Font("Arial", Font.BOLD, fontSize));
@@ -138,6 +173,13 @@ public class CustomizedUiWidgetsFactory {
         return returnTextArea;
     }
 
+    public void makeTextAreaReadOnlyInfo(JTextArea pTextArea) {
+        pTextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        pTextArea.setEditable(false);
+        pTextArea.setFocusable(false);
+//        pTextArea.setBackground(AppWideStrings.innerPanelBackgroundColor);
+    }
+
     public static class AutoHeightAdjustTextArea extends JTextArea {
         private static final long serialVersionUID = 1L;
 
@@ -146,7 +188,7 @@ public class CustomizedUiWidgetsFactory {
         }
 
         public AutoHeightAdjustTextArea(
-            int pRows, int pColumns, String pTextString, int fontSize) {
+                int pRows, int pColumns, String pTextString, int fontSize) {
 
             super(pRows, pColumns);
             setFont(new Font("Arial", Font.BOLD, fontSize));
@@ -181,7 +223,7 @@ public class CustomizedUiWidgetsFactory {
 
         } catch (IOException ex) {
             System.err.println(
-                "app - readTextFileIntoString() can't read file: " + pDirPathAndFileName);
+                    "app - readTextFileIntoString() can't read file: " + pDirPathAndFileName);
             ex.printStackTrace();
             return "";
         }
