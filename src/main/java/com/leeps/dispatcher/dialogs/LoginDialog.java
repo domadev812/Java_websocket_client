@@ -28,18 +28,18 @@ public class LoginDialog extends BaseDialog implements ActionListener{
     MaterialButton btnExit = new MaterialButton("EXIT", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
 
     private AppWideCallsService appWideCallsService;
-    public LoginDialog() {
-        super(640, 390);
+    public LoginDialog(JFrame parentFrame) {
+        super(parentFrame, 640, 390);
         setBackButtonVisible(false);
-        setBottomHidden(false);
+        setBottomVisible(false);
         setTitle("Log In");
         setModal(true);
     }
 
-    public LoginDialog(int width, int height, AppWideCallsService pAppWideCallsService) {
-        super(width, height);
+    public LoginDialog(JFrame parentFrame, int width, int height, AppWideCallsService pAppWideCallsService) {
+        super(parentFrame, width, height);
         setBackButtonVisible(false);
-        setBottomHidden(false);
+        setBottomVisible(false);
         setTitle("LOG IN");
         setUndecorated(true);
         initComponents();
@@ -195,17 +195,18 @@ public class LoginDialog extends BaseDialog implements ActionListener{
     }
 
     private void login() {
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            jsonObject.put(KeyStrings.keyAction, KeyStrings.actionLogin);
-            jsonObject.put(KeyStrings.keyEmail, txtEmail.getText());
-            jsonObject.put(KeyStrings.keyPassword, String.valueOf(txtPassword.getPassword()));
-            appWideCallsService.sendToServer(jsonObject);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        JSONObject jsonObject = new JSONObject();
+//
+//        try {
+//            jsonObject.put(KeyStrings.keyAction, KeyStrings.actionLogin);
+//            jsonObject.put(KeyStrings.keyEmail, txtEmail.getText());
+//            jsonObject.put(KeyStrings.keyPassword, String.valueOf(txtPassword.getPassword()));
+//            appWideCallsService.sendToServer(jsonObject);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        dispose();
     }
 
     public void showErrorMessage(String errorMessage) {

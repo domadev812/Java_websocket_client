@@ -63,7 +63,6 @@ public class DispatchCoverageFieldsPanel extends JPanel {
             coverageStateComboBox.addItem("State " + i);
         }
 
-
         coverageCityComboBox.insertItemAt(
                 AppWideStrings.defaultComboString, 0);
         for (int i = 0; i < 5; i++) {
@@ -174,11 +173,11 @@ public class DispatchCoverageFieldsPanel extends JPanel {
                 BorderFactory.createMatteBorder(5, 5, 5, 5, UIManager.getColor("Panel.background")),
                 BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
-        coverageStatePanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
-        coverageStateLabelPanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
-        coverageCityPanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
-        coverageStationNamePanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
-        coverageAddressPanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
+        coverageStatePanel.setBackground(AppWideStrings.panelBackgroundColor);
+        coverageStateLabelPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        coverageCityPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        coverageStationNamePanel.setBackground(AppWideStrings.panelBackgroundColor);
+        coverageAddressPanel.setBackground(AppWideStrings.panelBackgroundColor);
 
         coverageStatePanel.add(coverageStateComboBox);
         coverageStateLabelPanel.add(coverageStateNameLabel);
@@ -187,7 +186,7 @@ public class DispatchCoverageFieldsPanel extends JPanel {
         coverageAddressPanel.add(coverageAddressLabel);
 
         JPanel deleteRowPanel = new JPanel(new BorderLayout());
-        deleteRowPanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
+        deleteRowPanel.setBackground(AppWideStrings.panelBackgroundColor);
         deleteRowPanel.add(deleteRowButton, BorderLayout.CENTER);
         deleteRowPanel.add(Box.createVerticalStrut(5), BorderLayout.NORTH);
         deleteRowPanel.add(Box.createVerticalStrut(5), BorderLayout.SOUTH);
@@ -217,7 +216,7 @@ public class DispatchCoverageFieldsPanel extends JPanel {
                 TableLayout.PREFERRED
         }};
 
-        setBackground(AppWideStrings.innerPanelBackgroundColor);
+        setBackground(AppWideStrings.panelBackgroundColor);
         setLayout(new TableLayout(layoutSpec));
         add(new JLabel(AppWideStrings.stateString), "0,0");
         add(coverageStatePanel, "2,0");

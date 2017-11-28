@@ -26,8 +26,9 @@ public class BaseDialog extends JDialog implements ActionListener{
     public BaseDialog() {
     }
 
-    public BaseDialog(int width, int height)
+    public BaseDialog(JFrame parentFrame, int width, int height)
     {
+        super(parentFrame, "", true);
         setContentPane(contentPane);
         setBounds(common.getScreenSize().width / 2 - width / 2, common.getScreenSize().height / 2 - height / 2, width, height);
         initComponents();
@@ -41,6 +42,7 @@ public class BaseDialog extends JDialog implements ActionListener{
         contentPane.add(bottomPane, BorderLayout.SOUTH);
 
         btnBack.addActionListener(this);
+        setModal(true);
     }
 
     private void initComponents() {
@@ -76,7 +78,7 @@ public class BaseDialog extends JDialog implements ActionListener{
     public JPanel getCenterPane() {
         return centerPane;
     }
-    public void setBottomHidden(boolean flag) {
+    public void setBottomVisible(boolean flag) {
         bottomPane.setVisible(flag);
     }
     public void setTitle(String title) {

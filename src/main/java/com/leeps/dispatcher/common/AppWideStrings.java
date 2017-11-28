@@ -18,7 +18,7 @@ public interface AppWideStrings {
 
     //Color
     public Color primaryColor = new Color(0x33, 0x33, 0x33);
-    public Color innerPanelBackgroundColor = new Color(240, 240, 240);
+    public Color panelBackgroundColor = new Color(240, 240, 240);
     public Color whiteWithTransparentColor = new Color(255, 255, 255, 0);
 
     //Font
@@ -57,4 +57,14 @@ public interface AppWideStrings {
     public String cityString = "CITY";
     public String stationString = "DEPT/STATION";
     public String streetString = "STREET ADDRESS";
+
+    //Dispatcher Profile String
+    public String dispatchOperatorInfoString = "DISPATCHER INFO";
+    public String dispatchOperatorNameString = "NAME";
+    public String dispatchOperatorEmailString = "EMAIL";
+    public String dispatchOperatorIDString = "DISPATCHER ID";
+    public String icon_MatchPair = "information.png";
+    public String icon_MatchPair_HoverHelpText =
+            "Field is used to pair/match a police officer to the right dispatch room";
+    public String dispatchOperatorDispatchUnitLabelString = "DISPATCH UNIT";
 }

@@ -34,7 +34,6 @@ public class LeepsDispatch {
         customizeUiComponents();
 
         appFrame = new AppFrame();
-        appFrame.setVisible(true);
     }
 
     private static void handleSetLookAndFeelException(Exception ex) {

@@ -12,6 +12,7 @@ import com.leeps.dispatcher.service.ParsePacket;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import oracle.jvm.hotspot.jfr.JFR;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,6 +86,7 @@ public class AppFrame extends JFrame {
 
     public AppFrame() {
         thisAppFrame = this;
+        //setUndecorated(true);
 
         appWideCallsService = new AppWideCallsService();
         appWideCallsService.setAppFrame(this);
@@ -102,7 +104,7 @@ public class AppFrame extends JFrame {
         });
         threadConnection.start();
 
-        loginDialog = new LoginDialog(640, 390, appWideCallsService);
+        loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
         loginDialog.setVisible(true);
 
         initCustomizedUiWidgetsFactory();
@@ -112,12 +114,13 @@ public class AppFrame extends JFrame {
         setContentPane(contentPanel);
 //        addWindowListener(new FrameWindowListener());
 //        addComponentListener(new FrameResizedListener());
-        setTitle(AppWideStrings.appTitle);
+
         setJMenuBar(appMenuBar);
-
+        setTitle(AppWideStrings.appTitle);
         makeAppPreferredAppLocationAndSize();
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setVisible(true);
     }
 
     //Init Functions
@@ -277,9 +280,9 @@ public class AppFrame extends JFrame {
         dispatcherProfileMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent pE) {
-            if(dispatcherProfileDialog == null)
-                dispatcherProfileDialog = new DispatcherProfileDialog(1120, 800, appWideCallsService);
-            dispatcherProfileDialog.setVisible(true);
+                System.out.println("Visible Dialog");
+                dispatcherProfileDialog = new DispatcherProfileDialog(thisAppFrame,1120, 800, appWideCallsService);
+//                dispatcherProfileDialog.setVisible(true);
             }
         });
 

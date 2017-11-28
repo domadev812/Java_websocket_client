@@ -5,12 +5,11 @@ import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-
 public class AppCommon {
     public Font getRobotoFont(){
         Font robotoFont = null;
         InputStream imageInputStream1 = getClass().getResourceAsStream(
-                AppWideString.robotoFontBold);
+                AppWideStrings.robotoFontBold);
         try {
             robotoFont = Font.createFont(Font.TRUETYPE_FONT, imageInputStream1);
         } catch (FontFormatException e) {
@@ -25,7 +24,7 @@ public class AppCommon {
     public Font getRobotoFont(float fontSize){
         Font robotoFont = null;
         InputStream imageInputStream1 = getClass().getResourceAsStream(
-                AppWideString.robotoFontBold);
+                AppWideStrings.robotoFontBold);
         try {
             robotoFont = Font.createFont(Font.TRUETYPE_FONT, imageInputStream1);
         } catch (FontFormatException e) {
@@ -40,7 +39,7 @@ public class AppCommon {
     public Font getRobotoRegularFontUnderline(float fontSize){
         Font robotoFont = null;
         InputStream imageInputStream1 = getClass().getResourceAsStream(
-                AppWideString.robotoFontRegular);
+                AppWideStrings.robotoFontRegular);
         try {
             robotoFont = Font.createFont(Font.TRUETYPE_FONT, imageInputStream1);
         } catch (FontFormatException e) {
@@ -59,7 +58,7 @@ public class AppCommon {
     public Font getRobotoBoldFontUnderline(float fontSize){
         Font robotoFont = null;
         InputStream imageInputStream1 = getClass().getResourceAsStream(
-                AppWideString.robotoFontBold);
+                AppWideStrings.robotoFontBold);
         try {
             robotoFont = Font.createFont(Font.TRUETYPE_FONT, imageInputStream1);
         } catch (FontFormatException e) {
