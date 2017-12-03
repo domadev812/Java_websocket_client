@@ -34,6 +34,8 @@ public interface AppWideStrings {
     public String icon_delete_row = "delete.png";
     public String icon_delete_row_HoverHelpText = "Delete row";
 
+    public String icon_add_new_row = "add.png";
+    public String icon_add_new_row_HoverHelpText = "Add new row";
     // Generic Officer Picture
     public String emptyOfficerProfileImg = "../../../GenericOfficerPic.png";
 
@@ -67,4 +69,11 @@ public interface AppWideStrings {
     public String icon_MatchPair_HoverHelpText =
             "Field is used to pair/match a police officer to the right dispatch room";
     public String dispatchOperatorDispatchUnitLabelString = "DISPATCH UNIT";
+    public String dispatchOperatorPoliceDepartmentsCoveredLabelString =
+            "POLICE DEPARTMENT COVERED";
+    public String dispatchOperatorFireDepartmentsCoveredLabelString =
+            "FIRE DEPARTMENT COVERED";
+    public String dispatchOperatorEMTCoveredLabelString =
+            "EMERGENCY MEDICAL TECHNICIAN COVERED";
+
 }

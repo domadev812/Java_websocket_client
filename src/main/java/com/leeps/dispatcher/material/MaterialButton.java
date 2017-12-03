@@ -35,4 +35,8 @@ public class MaterialButton extends JButton {
         super (text);
         configureSettings (background, foreground, hover);
     }
+
+    public void setConfiguration (Color background, Color foreground, Color hover) {
+        configureSettings(background, foreground, hover);
+    }
 }

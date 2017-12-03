@@ -6,9 +6,13 @@ package com.leeps.dispatcher.panels;
 import com.leeps.dispatcher.common.AppWideStrings;
 import com.leeps.dispatcher.service.*;
 import com.leeps.dispatcher.uidatamodel.*;
+import de.craften.ui.swingmaterial.MaterialComboBox;
+import de.craften.ui.swingmaterial.MaterialPanel;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import layout.TableLayout;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,13 +25,12 @@ public class DispatchCoverageFieldsPanel extends JPanel {
     private CustomizedUiWidgetsFactory customizedUiWidgetsFactory;
     private JPanel parentPanel;
 
-    private ArrayList<StateModel> mapState = new ArrayList<StateModel>();
-    private ArrayList<CityModel> mapCity = new ArrayList<CityModel>();
-    private ArrayList<StationModel> mapStation = new ArrayList<StationModel>();
-    private JComboBox<String> coverageStateComboBox;
-    private JLabel coverageStateNameLabel;
-    private JComboBox<String> coverageCityComboBox;
-    private JComboBox<String> coverageStationNameComboBox;
+    private ArrayList<StateModel> listState = new ArrayList<StateModel>();
+    private ArrayList<CityModel> listCity = new ArrayList<CityModel>();
+    private ArrayList<StationModel> listStation = new ArrayList<StationModel>();
+    private MaterialComboBox<String> coverageStateComboBox;
+    private MaterialComboBox<String> coverageCityComboBox;
+    private MaterialComboBox<String> coverageStationComboBox;
 
     private JLabel coverageAddressLabel;
 
@@ -40,116 +43,104 @@ public class DispatchCoverageFieldsPanel extends JPanel {
         customizedUiWidgetsFactory = pCustomizedUiWidgetsFactory;
         parentPanel = pParentPanel;
 
-//        mapState = appWideCallsService.getStateList();
+        listState = appWideCallsService.getStateList();
 
-        coverageStateComboBox = new JComboBox<String>();
+        coverageStateComboBox = new MaterialComboBox<String>();
         coverageStateComboBox.setEditable(false);
-        coverageStateNameLabel = new JLabel();
 
-        coverageCityComboBox = new JComboBox<String>();
+        coverageCityComboBox = new MaterialComboBox<String>();
         coverageCityComboBox.setEditable(false);
 
-        coverageStationNameComboBox = new JComboBox<String>();
-        coverageStationNameComboBox.setEditable(false);
+        coverageStationComboBox = new MaterialComboBox<String>();
+        coverageStationComboBox.setEditable(false);
 
         coverageAddressLabel = new JLabel();
-        coverageStateComboBox.removeAllItems();
-//        for (int i = 0; i < mapState.size(); i++) {
-//            StateModel model = mapState.get(i);
-//            coverageStateComboBox.addItem(model.getStateCode());
-//        }
+        coverageAddressLabel.setFont(Roboto.BOLD.deriveFont(12.0f));
+        coverageAddressLabel.setBackground(Color.WHITE);
+        coverageAddressLabel.setOpaque(true);
+        coverageAddressLabel.setBorder(new EmptyBorder(1, 20, 1, 20));
 
-        for (int i = 0; i < 5; i++) {
-            coverageStateComboBox.addItem("State " + i);
+        coverageStateComboBox.removeAllItems();
+        for (int i = 0; i < listState.size(); i++) {
+            coverageStateComboBox.addItem(listState.get(i).getStateName());
         }
 
+        coverageStationComboBox.insertItemAt(
+                AppWideStrings.defaultComboString, 0);
         coverageCityComboBox.insertItemAt(
                 AppWideStrings.defaultComboString, 0);
-        for (int i = 0; i < 5; i++) {
-            coverageCityComboBox.addItem("State " + i);
-        }
 
-        coverageStationNameComboBox.insertItemAt(
-                AppWideStrings.defaultComboString, 0);
-        for (int i = 0; i < 5; i++) {
-            coverageStationNameComboBox.addItem("State " + i);
-        }
+        coverageStateComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                int index = coverageStateComboBox.getSelectedIndex();
+                if(index == -1) return;
+                StateModel selectedStateObject = listState.get(index);
 
-//        coverageStateComboBox.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent pE) {
-//                int index = coverageStateComboBox.getSelectedIndex();
-//                if(index == -1) return;
-//                StateModel selectedStateObject = mapState.get(index);
-//                String selectedStateString = selectedStateObject.getStateName();
-//
-//                coverageStateNameLabel.setText(selectedStateString);
-//
-//                coverageCityComboBox.removeAllItems();
-//                mapCity = appWideCallsService
-//                        .getCityList(selectedStateObject.getId());
-//                coverageCityComboBox.insertItemAt(
-//                        AppWideStrings.dispatchOperatorComboBoxSelectString, 0);
-//
-//                for (int i = 0; i < mapCity.size(); i++) {
-//                    CityModel model = mapCity.get(i);
-//                    coverageCityComboBox.addItem(model.getCityName());
-//                }
-//
-//                coverageStateComboBox.setBackground(Color.WHITE);
-//                coverageCityComboBox.setBackground(Color.WHITE);
-//                coverageStationNameComboBox.setBackground(Color.WHITE);
-//                coverageCityComboBox.setSelectedIndex(0);
-//                if(coverageStationNameComboBox.getItemCount() > 0)
-//                    coverageStationNameComboBox.setSelectedIndex(0);
-//            }
-//        });
-//
-//        coverageCityComboBox.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent pE) {
-//                int index = coverageCityComboBox.getSelectedIndex();
-//                if(index == 0 || index == -1) {
-//                    coverageStationNameComboBox.setSelectedIndex(0);
-//                    return;
-//                }
-//                index--;
-//                CityModel selectedCityObject = mapCity.get(index);
-//
-//                coverageStationNameComboBox.removeAllItems();
-//                mapStation = appWideCallsService
-//                        .getStationList(selectedCityObject.getId());
-//                coverageStationNameComboBox.insertItemAt(
-//                        AppWideStrings.dispatchOperatorComboBoxSelectString, 0);
-//
-//                for (int i = 0; i < mapStation.size(); i++) {
-//                    StationModel model = mapStation.get(i);
-//                    coverageStationNameComboBox.addItem(model.getStationName());
-//                }
-//
-//                coverageStateComboBox.setBackground(Color.WHITE);
-//                coverageCityComboBox.setBackground(Color.WHITE);
-//                coverageStationNameComboBox.setBackground(Color.WHITE);
-//                coverageStationNameComboBox.setSelectedIndex(0);
-//            }
-//        });
-//
-//        coverageStationNameComboBox.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent pE) {
-//                coverageStationNameComboBox.setBackground(Color.WHITE);
-//                coverageAddressLabel.setForeground(Color.BLACK);
-//                int index = coverageStationNameComboBox.getSelectedIndex();
-//                if(index == 0 || index == -1)
-//                {
-//                    coverageAddressLabel.setText("");
-//                    return;
-//                }
-//                index--;
-//                StationModel selectedStationObject = mapStation.get(index);
-//                coverageAddressLabel.setText(selectedStationObject.getFullAddress());
-//            }
-//        });
+                coverageCityComboBox.removeAllItems();
+                listCity = appWideCallsService
+                        .getCityList(selectedStateObject.getId());
+                coverageCityComboBox.insertItemAt(
+                        AppWideStrings.defaultComboString, 0);
+
+                for (int i = 0; i < listCity.size(); i++) {
+                    coverageCityComboBox.addItem(listCity.get(i).getCityName());
+                }
+
+                coverageStateComboBox.setBackground(Color.WHITE);
+                coverageCityComboBox.setBackground(Color.WHITE);
+                coverageStationComboBox.setBackground(Color.WHITE);
+                coverageCityComboBox.setSelectedIndex(0);
+                if(coverageStationComboBox.getItemCount() > 0)
+                    coverageStationComboBox.setSelectedIndex(0);
+            }
+        });
+
+        coverageCityComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                int index = coverageCityComboBox.getSelectedIndex();
+                if(index == 0 || index == -1) {
+                    coverageStationComboBox.setSelectedIndex(0);
+                    return;
+                }
+                index--;
+                CityModel selectedCityObject = listCity.get(index);
+
+                coverageStationComboBox.removeAllItems();
+                listStation = appWideCallsService
+                        .getStationList(selectedCityObject.getId());
+                coverageStationComboBox.insertItemAt(
+                        AppWideStrings.defaultComboString, 0);
+
+                for (int i = 0; i < listStation.size(); i++) {
+                    StationModel model = listStation.get(i);
+                    coverageStationComboBox.addItem(model.getStationName());
+                }
+
+                coverageStateComboBox.setBackground(Color.WHITE);
+                coverageCityComboBox.setBackground(Color.WHITE);
+                coverageStationComboBox.setBackground(Color.WHITE);
+                coverageStationComboBox.setSelectedIndex(0);
+            }
+        });
+
+        coverageStationComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                coverageStationComboBox.setBackground(Color.WHITE);
+                coverageAddressLabel.setForeground(Color.BLACK);
+                int index = coverageStationComboBox.getSelectedIndex();
+                if(index == 0 || index == -1)
+                {
+                    coverageAddressLabel.setText("");
+                    return;
+                }
+                index--;
+                StationModel selectedStationObject = listStation.get(index);
+                coverageAddressLabel.setText(selectedStationObject.getFullAddress());
+            }
+        });
 
         deleteRowButton = customizedUiWidgetsFactory.makeFam3IconButton(
                 AppWideStrings.icon_delete_row, AppWideStrings.icon_delete_row_HoverHelpText, 20, 20);
@@ -159,73 +150,91 @@ public class DispatchCoverageFieldsPanel extends JPanel {
                 handleDeleteRowButtonClicked();
             }
         });
+        deleteRowButton.setBorder(BorderFactory.createEmptyBorder());
+        deleteRowButton.setBorderPainted(false);
+        deleteRowButton.setContentAreaFilled(false);
 
-        JPanel coverageStatePanel = new JPanel(new GridLayout(0, 1));
-        JPanel coverageStateLabelPanel = new JPanel(new GridLayout(0, 1));
-        JPanel coverageCityPanel = new JPanel(new GridLayout(0, 1));
-        JPanel coverageStationNamePanel = new JPanel(new GridLayout(0, 1));
-        JPanel coverageAddressPanel = new JPanel(new GridLayout(0, 1));
+        MaterialPanel coverageStatePanel = new MaterialPanel();
+        MaterialPanel coverageCityPanel = new MaterialPanel();
+        MaterialPanel coverageStationPanel = new MaterialPanel();
+        MaterialPanel coverageAddressPanel = new MaterialPanel();
 
-        coverageStateLabelPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(5, 5, 5, 5, UIManager.getColor("Panel.background")),
-                BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-        coverageAddressPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(5, 5, 5, 5, UIManager.getColor("Panel.background")),
-                BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
-        coverageStatePanel.setBackground(AppWideStrings.panelBackgroundColor);
-        coverageStateLabelPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        coverageCityPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        coverageStationNamePanel.setBackground(AppWideStrings.panelBackgroundColor);
-        coverageAddressPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        coverageStatePanel.setLayout(new GridLayout(0, 1));
+        coverageStatePanel.setBackground(Color.WHITE);
+
+        coverageCityPanel.setBackground(Color.WHITE);
+        coverageCityPanel.setLayout(new GridLayout(0, 1));
+
+        coverageStationPanel.setBackground(Color.WHITE);
+        coverageStationPanel.setLayout(new GridLayout(0, 1));
+
+        coverageAddressPanel.setBackground(Color.WHITE);
+        coverageAddressPanel.setLayout(new GridLayout(0, 1));
 
         coverageStatePanel.add(coverageStateComboBox);
-        coverageStateLabelPanel.add(coverageStateNameLabel);
         coverageCityPanel.add(coverageCityComboBox);
-        coverageStationNamePanel.add(coverageStationNameComboBox);
+        coverageStationPanel.add(coverageStationComboBox);
         coverageAddressPanel.add(coverageAddressLabel);
 
         JPanel deleteRowPanel = new JPanel(new BorderLayout());
         deleteRowPanel.setBackground(AppWideStrings.panelBackgroundColor);
         deleteRowPanel.add(deleteRowButton, BorderLayout.CENTER);
-        deleteRowPanel.add(Box.createVerticalStrut(5), BorderLayout.NORTH);
-        deleteRowPanel.add(Box.createVerticalStrut(5), BorderLayout.SOUTH);
 
         double[][] layoutSpec = new double[][]{{
                 // Columns
                 TableLayout.PREFERRED, // 0 "State"
-                2, // 0 spacing
-                55, // 2 CombBox state
-                100, // 3 Label long state name
+                5, // 0 spacing
+                140, // 2 CombBox state
+                10, // 3 Label long state name
                 10, // 4 spacing
                 TableLayout.PREFERRED, // 5 "City"
-                2, // 6 spacing
+                5, // 6 spacing
                 170, // 7 CombBox city
-                10, // 8 spacing
-                113, // 9 "Department / Station"
-                2, // 10 spacing
-                246, // 11 ComboBox Department / Station
-                10, // 12 spacing
+                20, // 8 spacing
+                TableLayout.PREFERRED, // 9 "Department / Station"
+                5, // 10 spacing
+                140, // 11 ComboBox Department / Station
+                20, // 12 spacing
                 TableLayout.PREFERRED, // 13 "Street Address"
-                2, // 14 spacing
+                5, // 14 spacing
                 TableLayout.FILL, // 15 TextField Street Address
-                3, // 16 spacing
+                10, // 16 spacing
                 20 // 17 Delete icon
         }, {
                 // Rows
-                TableLayout.PREFERRED
+                40
         }};
 
         setBackground(AppWideStrings.panelBackgroundColor);
         setLayout(new TableLayout(layoutSpec));
-        add(new JLabel(AppWideStrings.stateString), "0,0");
+
+        JLabel lblStateString = new JLabel(AppWideStrings.stateString);
+        lblStateString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblStateString.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        add(lblStateString, "0,0");
         add(coverageStatePanel, "2,0");
-        add(coverageStateLabelPanel, "3,0");
-        add(new JLabel(AppWideStrings.cityString), "5,0");
+
+        JLabel lblCityString = new JLabel(AppWideStrings.cityString);
+        lblCityString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblCityString.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        add(lblCityString, "5,0");
         add(coverageCityPanel, "7,0");
-        add(new JLabel(AppWideStrings.stationString), "9,0");
-        add(coverageStationNamePanel, "11,0");
-        add(new JLabel(AppWideStrings.streetString), "13,0");
+
+        JLabel lblStationString = new JLabel(AppWideStrings.stationString);
+        lblStationString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblStationString.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        add(lblStationString, "9,0");
+        add(coverageStationPanel, "11,0");
+
+        JLabel lblStreetString = new JLabel(AppWideStrings.streetString);
+        lblStreetString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblStreetString.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        add(lblStreetString, "13,0");
         add(coverageAddressPanel, "15,0");
         add(deleteRowPanel, "17,0");
     }
@@ -233,7 +242,7 @@ public class DispatchCoverageFieldsPanel extends JPanel {
     public void setFieldsEditable(boolean pEditable) {
         coverageStateComboBox.setEnabled(pEditable);
         coverageCityComboBox.setEnabled(pEditable);
-        coverageStationNameComboBox.setEnabled(pEditable);
+        coverageStationComboBox.setEnabled(pEditable);
         deleteRowButton.setEnabled(pEditable);
     }
 
@@ -247,16 +256,14 @@ public class DispatchCoverageFieldsPanel extends JPanel {
     }
 
     public void setDispatcherCoveredFields(DispatchStationModel model) {
+        coverageStateComboBox.setSelectedItem(model.getState_name());
         coverageStateComboBox.setBackground(Color.WHITE);
-        coverageStateComboBox.setSelectedItem(model.getState_code());
-
-        coverageStateNameLabel.setText(model.getState_name());
 
         coverageCityComboBox.setBackground(Color.WHITE);
         coverageCityComboBox.setSelectedItem(model.getCity_name());
 
-        coverageStationNameComboBox.setBackground(Color.WHITE);
-        coverageStationNameComboBox.setSelectedItem(model.getStation_name());
+        coverageStationComboBox.setBackground(Color.WHITE);
+        coverageStationComboBox.setSelectedItem(model.getStation_name());
 
         coverageAddressLabel.setForeground(Color.BLACK);
         coverageAddressLabel.setText(model.getFull_address());
@@ -270,7 +277,7 @@ public class DispatchCoverageFieldsPanel extends JPanel {
 
         int indState = coverageStateComboBox.getSelectedIndex();
         int indCity = coverageCityComboBox.getSelectedIndex();
-        int indStation = coverageStationNameComboBox.getSelectedIndex();
+        int indStation = coverageStationComboBox.getSelectedIndex();
         boolean allFieldsFilledIn = true;
         DispatchStationModel model = new DispatchStationModel();
         if(indState == -1)
@@ -288,14 +295,14 @@ public class DispatchCoverageFieldsPanel extends JPanel {
         if(indStation == -1 || indStation == 0)
         {
             allFieldsFilledIn = false;
-            coverageStationNameComboBox.setBackground(Color.RED);
+            coverageStationComboBox.setBackground(Color.RED);
         }
 
         if(!allFieldsFilledIn) model = null;
         else {
-            StateModel modelState = mapState.get(indState);
-            CityModel modelCity = mapCity.get(indCity - 1);
-            StationModel modelStation = mapStation.get(indStation - 1);
+            StateModel modelState = listState.get(indState);
+            CityModel modelCity = listCity.get(indCity - 1);
+            StationModel modelStation = listStation.get(indStation - 1);
 
             model.setId(0);
             model.setDispatch_id(0);
@@ -316,12 +323,12 @@ public class DispatchCoverageFieldsPanel extends JPanel {
         if (pMakeRed) {
             coverageStateComboBox.setBackground(Color.RED);
             coverageCityComboBox.setBackground(Color.RED);
-            coverageStationNameComboBox.setBackground(Color.RED);
+            coverageStationComboBox.setBackground(Color.RED);
             coverageAddressLabel.setForeground(Color.RED);
         } else {
             coverageStateComboBox.setBackground(Color.WHITE);
             coverageCityComboBox.setBackground(Color.WHITE);
-            coverageStationNameComboBox.setBackground(Color.WHITE);
+            coverageStationComboBox.setBackground(Color.WHITE);
             coverageAddressLabel.setForeground(Color.BLACK);
         }
     }
@@ -339,9 +346,8 @@ public class DispatchCoverageFieldsPanel extends JPanel {
     public void freeUpMemory() {
         try {
             coverageStateComboBox = null;
-            coverageStateNameLabel = null;
             coverageCityComboBox = null;
-            coverageStationNameComboBox = null;
+            coverageStationComboBox = null;
             coverageAddressLabel = null;
             deleteRowButton = null;
             setLayout(null);

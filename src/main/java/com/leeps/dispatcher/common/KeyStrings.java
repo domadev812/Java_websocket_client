@@ -18,4 +18,24 @@ public interface KeyStrings {
     String keyID = "id";
     String keyEmail = "email";
     String keyPassword = "password";
+    String keyStateList = "state_list";
+    String keyStateName = "state_name";
+    String keyStateCode = "state_code";
+    String keyStateID = "state_id";
+
+    String keyCityList = "city_list";
+    String keyCityID = "city_id";
+    String keyCityName = "city_name";
+    String keyDispatchStationList = "dispatch_station_list";
+    String keyOfficerID = "officerId";
+    String keyDispatcherID = "dispatcherId";
+    String keyZipCode = "zip_code";
+    String keyStationName = "station_name";
+    String keyFullAddress = "full_address";
+    String keyStreetName = "street_name";
+    String keyPhoneNumber1 = "phone_number1";
+    String keyPhoneNumber2 = "phone_number2";
+    String keyStationList = "station_list";
+    String keyStationID = "station_id";
+    String keyType = "type";
 }

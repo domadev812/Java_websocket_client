@@ -21,10 +21,25 @@ public class AppCommon {
         return robotoFont;
     }
 
-    public Font getRobotoFont(float fontSize){
+    public Font getRobotoBoldFont(float fontSize){
         Font robotoFont = null;
         InputStream imageInputStream1 = getClass().getResourceAsStream(
                 AppWideStrings.robotoFontBold);
+        try {
+            robotoFont = Font.createFont(Font.TRUETYPE_FONT, imageInputStream1);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return robotoFont.deriveFont(fontSize);
+    }
+
+    public Font getRobotoRegularFont(float fontSize){
+        Font robotoFont = null;
+        InputStream imageInputStream1 = getClass().getResourceAsStream(
+                AppWideStrings.robotoFontRegular);
         try {
             robotoFont = Font.createFont(Font.TRUETYPE_FONT, imageInputStream1);
         } catch (FontFormatException e) {

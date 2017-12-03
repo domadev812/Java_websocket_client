@@ -1,14 +1,10 @@
 package com.leeps.dispatcher;
 
-import com.leeps.dispatcher.common.AppCommon;
-import com.leeps.dispatcher.common.AppWideStrings;
-import com.leeps.dispatcher.common.KeyStrings;
-import com.leeps.dispatcher.dialogs.DispatcherProfileDialog;
-import com.leeps.dispatcher.dialogs.LoginDialog;
+import com.leeps.dispatcher.common.*;
+import com.leeps.dispatcher.dialogs.*;
 import com.leeps.dispatcher.material.MaterialButton;
-import com.leeps.dispatcher.service.AppWideCallsService;
-import com.leeps.dispatcher.service.CustomizedUiWidgetsFactory;
-import com.leeps.dispatcher.service.ParsePacket;
+import com.leeps.dispatcher.service.*;
+import com.leeps.dispatcher.uidatamodel.*;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -29,13 +25,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class AppFrame extends JFrame {
     private AppFrame thisAppFrame;
 
     // Dispatcher Profile Variable
-    int dispatcherID;
+    private int dispatcherID;
+    private JSONObject dispatcherProfile = new JSONObject();
 
     //Service and Constant Class Variable
     private AppWideCallsService appWideCallsService;
@@ -53,6 +51,7 @@ public class AppFrame extends JFrame {
     private enum WhichAppIcon {
         APP_ICON_1, APP_ICON_2
     }
+
     //Menu Component
     private JMenuBar appMenuBar;
     private JMenu dispatcherProfileMenu;
@@ -74,12 +73,13 @@ public class AppFrame extends JFrame {
 
     private Rectangle preferredAppLocationAndSize;
 
-
-    private JSONObject dispatcherProfile = new JSONObject();
-
+    private ArrayList<StateModel> listState = new ArrayList<StateModel>();
+    private ArrayList<CityModel> listCity = new ArrayList<CityModel>();
+    private ArrayList<StationModel> listStation = new ArrayList<StationModel>();
+    private ArrayList<DispatchStationModel> listDispatcherStation = new ArrayList<DispatchStationModel>();
 
     //Socket Variables
-    Socket socket;
+    private Socket socket;
     final private String serverIP = "192.168.0.100";
 //    final private String serverIP = "ec2-user@ec2-34-213-184-150.us-west-2.compute.amazonaws.com";
     final private int SERVER_PORT = 8120;
@@ -123,6 +123,18 @@ public class AppFrame extends JFrame {
         setVisible(true);
     }
 
+    //Data Manage Functions
+    public void setStateList(ArrayList<StateModel> listState) {this.listState = listState;}
+    public ArrayList<StateModel> getStateList() {return this.listState;}
+
+    public void setCityList(ArrayList<CityModel> listCity) {this.listCity = listCity;}
+    public ArrayList<CityModel> getCityList() {return this.listCity;}
+
+    public void setStationList(ArrayList<StationModel> listStation) {this.listStation = listStation;}
+    public ArrayList<StationModel> getStationList() {return this.listStation;}
+
+    public void setDispatchStationList(ArrayList<DispatchStationModel> mapDispatchStation) {this.listDispatcherStation = mapDispatchStation;}
+    public ArrayList<DispatchStationModel> getDispatchStationList() {return this.listDispatcherStation;}
     //Init Functions
     private void initProperties() {
         Properties aProperties = new Properties();
@@ -191,7 +203,7 @@ public class AppFrame extends JFrame {
         pJMenu.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         pJMenu.setCursor(handPointingCursor);
         pJMenu.setForeground(Color.WHITE);
-        pJMenu.setFont(common.getRobotoFont(14.0f));
+        pJMenu.setFont(common.getRobotoBoldFont(14.0f));
         pJMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent pE) {
@@ -257,7 +269,7 @@ public class AppFrame extends JFrame {
         handPointingCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
         alarmsPendingButton = new MaterialButton(AppWideStrings.alarmPendingButtonString + 0, new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x56, 0x56, 0x56));
-        alarmsPendingButton.setFont(common.getRobotoFont(14.0f));
+        alarmsPendingButton.setFont(common.getRobotoBoldFont(14.0f));
         alarmsPendingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -308,14 +320,14 @@ public class AppFrame extends JFrame {
     private void buildBottomPanel() {
         lblApplicationStatus.setText(AppWideStrings.applicationStatusString + " " + AppWideStrings.applicationAwaitingOfficers);
         lblApplicationStatus.setForeground(Color.WHITE);
-        lblApplicationStatus.setFont(common.getRobotoFont(14.0f));
+        lblApplicationStatus.setFont(common.getRobotoBoldFont(14.0f));
 
         lblConnection.setText(AppWideStrings.socketConnectionString);
         lblConnection.setForeground(Color.WHITE);
-        lblConnection.setFont(common.getRobotoFont(10.0f));
+        lblConnection.setFont(common.getRobotoBoldFont(10.0f));
 
         lblConnectionImage.setForeground(Color.WHITE);
-        lblConnectionImage.setFont(common.getRobotoFont(10.0f));
+        lblConnectionImage.setFont(common.getRobotoBoldFont(10.0f));
         lblConnectionImage.setIcon(connectedImageIcon);
 
         JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
@@ -372,6 +384,33 @@ public class AppFrame extends JFrame {
         socket.emit(KeyStrings.toServer, jsonObject);
     }
 
+    public void loadAddressData()
+    {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("action", "get_state_list");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sendToServer(jsonObject);
+
+        try {
+            jsonObject.remove("action");
+            jsonObject.put("action", "get_city_list");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sendToServer(jsonObject);
+
+        try {
+            jsonObject.remove("action");
+            jsonObject.put("action", "get_station_list");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sendToServer(jsonObject);
+    }
+
     private void initConnection() throws InterruptedException, UnsupportedEncodingException
     {
         final ParsePacket parsePacket = new ParsePacket(this);
@@ -386,7 +425,7 @@ public class AppFrame extends JFrame {
             public void call(Object... args) {
 //                setWebSocketHandshakeSuccess(true);
 //                showServerConnectionUpPanel();
-//                loadAddressData();
+                loadAddressData();
                 System.out.println(appWideCallsService.getCurrentTime() + " --- " + "Connected");
             }
         }).on(Socket.EVENT_ERROR, new Emitter.Listener() {

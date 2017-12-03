@@ -1,22 +1,23 @@
 package com.leeps.dispatcher.dialogs;
 
 import com.leeps.dispatcher.common.AppWideStrings;
-import com.leeps.dispatcher.material.MaterialComboBox;
-import com.leeps.dispatcher.material.MaterialTextField;
+import com.leeps.dispatcher.material.MaterialButton;
+import com.leeps.dispatcher.panels.DispatchCoverageFieldsPanel;
 import com.leeps.dispatcher.service.*;
 import com.leeps.dispatcher.uidatamodel.*;
+import de.craften.ui.swingmaterial.MaterialComboBox;
+import de.craften.ui.swingmaterial.MaterialPanel;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import layout.TableLayout;
-import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.border.DropShadowBorder;
+import org.json.JSONException;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
@@ -24,29 +25,44 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
     private static final long serialVersionUID = 1L;
     private AppWideCallsService appWideCallsService;
     private CustomizedUiWidgetsFactory customizedUiWidgetsFactory;
+    private boolean editFlag = false;
 
     private JPanel detailTopBottomFillPanel;
 
-    private JLabel infoMatchDispatchStationLabel;
-    private JLabel infoMatchPoliceCoveredLabel;
-    private JLabel infoMatchFireCoveredLabel;
-    private JLabel infoMatchEmtCoveredLabel;
+    private JPanel dispatcherInfoPanel;
 
     private JTextField dispatcherFullNameTextField;
     private JTextField dispatcherEmailTextField;
     private JTextField dispatcherIDTextField;
-    private JPanel dispatcherInfoPanel;
 
-    private JComboBox<String> dispatcherStateComboBox;
-    private JLabel dispatcherStateNameLabel;
-    private JComboBox<String> dispatcherCityComboBox;
-    private JComboBox<String> dispatcherStationNameComboBox;
+    private MaterialComboBox<String> dispatcherStateComboBox;
+    private MaterialComboBox<String> dispatcherCityComboBox;
+    private MaterialComboBox<String> dispatcherStationNameComboBox;
     private JLabel dispatchStreetAddressLabel;
     private JPanel dispatcherUnitPanel;
 
+
+    private JPanel policeDepartmentsCoveredPanel;
+    private JPanel fireDepartmentsCoveredPanel;
+    private JPanel emtCoveredPanel;
+
+    private JPanel policeSpecificDepartmentsPanel;
+    private JPanel fireSpecificDepartmentsPanel;
+    private JPanel emtSpecificUnitsPanel;
+
+    private JPanel footerPanel;
+    private MaterialButton editProfileButton;
+    private MaterialButton saveProfileButton;
+    private MaterialButton deactiveProfileButton;
+
+    private MaterialPanel coverageEmtAdd, coverageFireAdd, coveragePoliceAdd;
+    private MaterialButton addPoliceRowButton;
+    private MaterialButton addFireRowButton;
+    private MaterialButton addEmtRowButton;
+
     private ArrayList<DispatchStationModel> policeRowsModelList;
     private ArrayList<DispatchStationModel> fireRowsModelList;
-    private ArrayList<DispatchStationModel> medicalRowsModelList;
+    private ArrayList<DispatchStationModel> emtRowsModelList;
 
     public DispatcherProfileDialog(JFrame parentFrame, int width, int height, AppWideCallsService pAppWideCallsService) {
         super(parentFrame, width, height);
@@ -63,9 +79,9 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
     }
 
     private void initDispatcherInfoComponents() {
-        JPanel dispatchNamePanel = new JPanel(new GridLayout(0, 1));
-        JPanel dispatchEmailPanel = new JPanel(new GridLayout(0, 1));
-        JPanel dispatchIDPanel = new JPanel(new GridLayout(0, 1));
+        MaterialPanel dispatchNamePanel = new MaterialPanel();
+        MaterialPanel dispatchEmailPanel = new MaterialPanel();
+        MaterialPanel dispatchIDPanel = new MaterialPanel();
 
         DropShadowBorder border = new DropShadowBorder(Color.BLACK, 2,
                 0.3f, 2, false,
@@ -75,26 +91,26 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         dispatcherEmailTextField = new JTextField("EMAIL@MAIL.COM");
         dispatcherIDTextField = new JTextField("123456789");
 
+        dispatchNamePanel.setLayout(new GridLayout(0, 1));
         dispatchNamePanel.add(dispatcherFullNameTextField);
         dispatcherFullNameTextField.setBorder(new EmptyBorder(1, 20, 1, 20));
-        dispatcherFullNameTextField.setFont(common.getRobotoFont(12.0f));
+        dispatcherFullNameTextField.setFont(Roboto.BOLD.deriveFont(12.0f));
         dispatcherFullNameTextField.setForeground(Color.BLACK);
         dispatchNamePanel.setBackground(Color.WHITE);
-        dispatchNamePanel.setBorder(border);
 
+        dispatchEmailPanel.setLayout(new GridLayout(0, 1));
         dispatchEmailPanel.add(dispatcherEmailTextField);
         dispatcherEmailTextField.setBorder(new EmptyBorder(1, 20, 1, 20));
-        dispatcherEmailTextField.setFont(common.getRobotoFont(12.0f));
+        dispatcherEmailTextField.setFont(Roboto.BOLD.deriveFont(12.0f));
         dispatcherEmailTextField.setForeground(Color.BLACK);
-        dispatchEmailPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        dispatchEmailPanel.setBorder(border);
+        dispatchEmailPanel.setBackground(Color.WHITE);
 
+        dispatchIDPanel.setLayout(new GridLayout(0, 1));
         dispatchIDPanel.add(dispatcherIDTextField);
-        dispatcherIDTextField.setBorder(new EmptyBorder(1, 10, 1, 10));
-        dispatcherIDTextField.setFont(common.getRobotoFont(12.0f));
+        dispatcherIDTextField.setBorder(new EmptyBorder(1, 20, 1, 20));
+        dispatcherIDTextField.setFont(Roboto.BOLD.deriveFont(12.0f));
         dispatcherIDTextField.setForeground(Color.BLACK);
-        dispatchIDPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        dispatchIDPanel.setBorder(border);
+        dispatchIDPanel.setBackground(Color.WHITE);
 
         double[][] dispatcherInfoLayoutSpec = new double[][] { {
                 // Columns
@@ -109,53 +125,52 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
                 20, // 8 spacing
                 TableLayout.PREFERRED, // 9 "Your ID"
                 5, // 10 spacing
-                90, // 11 TextField your id
+                140, // 11 TextField your id
                 22 // 12 spacing on far right
         }, {
                 // Rows
                 TableLayout.PREFERRED, // 0 "Dispatcher Info"
                 10,
-                36, // 1 has Dispatcher Full name, Email, dispatcher ID
+                50, // 1 has Dispatcher Full name, Email, dispatcher ID
                 10
         } };
 
         dispatcherInfoPanel = new JPanel(new TableLayout(dispatcherInfoLayoutSpec));
         JLabel lblInfoString = new JLabel(AppWideStrings.dispatchOperatorInfoString);
-        lblInfoString.setFont(common.getRobotoFont(12.0f));
+        lblInfoString.setFont(Roboto.BOLD.deriveFont(12.0f));
         dispatcherInfoPanel.add(lblInfoString, "1,0,11,0");
         //
         JLabel lblNameString = new JLabel(AppWideStrings.dispatchOperatorNameString);
-        lblNameString.setFont(common.getRobotoFont(12.0f));
+        lblNameString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         lblNameString.setHorizontalAlignment(SwingConstants.RIGHT);
         dispatcherInfoPanel.add(lblNameString, "1,2");
         dispatcherInfoPanel.add(dispatchNamePanel, "3,2");
         //
         JLabel lblEmailString = new JLabel(AppWideStrings.dispatchOperatorEmailString);
-        lblEmailString.setFont(common.getRobotoFont(12.0f));
+        lblEmailString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         lblEmailString.setHorizontalAlignment(SwingConstants.RIGHT);
         dispatcherInfoPanel.add(lblEmailString, "5,2");
         dispatcherInfoPanel.add(dispatchEmailPanel, "7,2");
         //
         JLabel lblIDString = new JLabel(AppWideStrings.dispatchOperatorIDString);
-        lblIDString.setFont(common.getRobotoFont(12.0f));
+        lblIDString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         lblIDString.setHorizontalAlignment(SwingConstants.RIGHT);
         dispatcherInfoPanel.add(lblIDString, "9,2");
         dispatcherInfoPanel.add(dispatchIDPanel, "11,2");
         dispatcherInfoPanel.setBackground(AppWideStrings.panelBackgroundColor);
 
-        dispatcherStateComboBox = new JComboBox<String>();
-        dispatcherStateComboBox.setEditable(false);
+        dispatcherStateComboBox = new MaterialComboBox<>();
         dispatcherStateComboBox.setBackground(Color.WHITE);
-        dispatcherStateComboBox.setUI(new BasicComboBoxUI());
 
-        dispatcherStateNameLabel = new JLabel();
-        dispatcherCityComboBox = new JComboBox<String>();
-        dispatcherCityComboBox.setEditable(false);
-        dispatcherStationNameComboBox = new JComboBox<String>();
+        dispatcherCityComboBox = new MaterialComboBox<String>();
+        dispatcherCityComboBox.setBackground(Color.WHITE);
+
+        dispatcherStationNameComboBox = new MaterialComboBox<String>();
         dispatcherStationNameComboBox.setEditable(false);
+        dispatcherStationNameComboBox.setBackground(Color.WHITE);
 
-        dispatchStreetAddressLabel = new JLabel("Street Address");
-        dispatchStreetAddressLabel.setFont(common.getRobotoFont(12.0f));
+        dispatchStreetAddressLabel = new JLabel(AppWideStrings.streetString);
+        dispatchStreetAddressLabel.setFont(common.getRobotoBoldFont(12.0f));
         dispatchStreetAddressLabel.setBackground(Color.WHITE);
         dispatchStreetAddressLabel.setOpaque(true);
         dispatchStreetAddressLabel.setBorder(new EmptyBorder(1, 20, 1, 20));
@@ -172,23 +187,28 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
             dispatcherStationNameComboBox.addItem("Station " + i);
         }
 
-        JPanel dispatchStatePanel = new JPanel(new GridLayout(0, 1));
-        JPanel dispatchCityPanel = new JPanel(new GridLayout(0, 1));
-        JPanel dispatchStationNamePanel = new JPanel(new GridLayout(0, 1));
-        JPanel dispatchStreetAddressPanel = new JPanel(new GridLayout(0, 1));
+        MaterialPanel dispatchStatePanel = new MaterialPanel();
+        MaterialPanel dispatchCityPanel = new MaterialPanel();
+        MaterialPanel dispatchStationPanel = new MaterialPanel();
+        MaterialPanel dispatchStreetAddressPanel = new MaterialPanel();
 
         //
-        dispatchStatePanel.setBackground(AppWideStrings.panelBackgroundColor);
-        dispatchCityPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        dispatchStationNamePanel.setBackground(AppWideStrings.panelBackgroundColor);
-        dispatchStreetAddressPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        dispatchStatePanel.setLayout(new GridLayout(0, 1));
+        dispatchStatePanel.setBackground(Color.WHITE);
+
+        dispatchCityPanel.setBackground(Color.WHITE);
+        dispatchCityPanel.setLayout(new GridLayout(0, 1));
+
+        dispatchStationPanel.setBackground(Color.WHITE);
+        dispatchStationPanel.setLayout(new GridLayout(0, 1));
+
+        dispatchStreetAddressPanel.setBackground(Color.WHITE);
+        dispatchStreetAddressPanel.setLayout(new GridLayout(0, 1));
         //
         dispatchStatePanel.add(dispatcherStateComboBox);
-        dispatchStatePanel.setBorder(border);
         dispatchCityPanel.add(dispatcherCityComboBox);
-        dispatchStationNamePanel.add(dispatcherStationNameComboBox);
+        dispatchStationPanel.add(dispatcherStationNameComboBox);
         dispatchStreetAddressPanel.add(dispatchStreetAddressLabel);
-        dispatchStreetAddressPanel.setBorder(border);
 
         double[][] dispatchStationLayoutSpec = new double[][] { {
                 // Columns
@@ -214,36 +234,222 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         }, {
                 // Rows
                 TableLayout.PREFERRED, // 0 "Dispatch Unit"
-                10,
-                36, // 1 State, City, Dispatch Unit Name, Street Address
+                0,
+                40, // 1 State, City, Dispatch Unit Name, Street Address
                 10
         } };
 
         dispatcherUnitPanel = new JPanel(new TableLayout(dispatchStationLayoutSpec));
         dispatcherUnitPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        infoMatchDispatchStationLabel = customizedUiWidgetsFactory.makeFam3IconLabel(
-                AppWideStrings.icon_MatchPair, AppWideStrings.icon_MatchPair_HoverHelpText, 20, 20);
-        dispatcherUnitPanel.add(infoMatchDispatchStationLabel, "0,0");
 
         JLabel lblDispatchInfoString = new JLabel(AppWideStrings.dispatchOperatorDispatchUnitLabelString);
-        lblDispatchInfoString.setFont(common.getRobotoFont(12.0f));
+        lblDispatchInfoString.setFont(Roboto.BOLD.deriveFont(12.0f));
         dispatcherUnitPanel.add(lblDispatchInfoString, "2,0,18,0");
         //
-        dispatcherUnitPanel.add(new JLabel(
-                AppWideStrings.stateString), "2,2");
+        JLabel lblStateString = new JLabel(AppWideStrings.stateString);
+        lblStateString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblStateString.setHorizontalAlignment(SwingConstants.RIGHT);
+        dispatcherUnitPanel.add(lblStateString, "2,2");
         dispatcherUnitPanel.add(dispatchStatePanel, "4,2");
         //
-        dispatcherUnitPanel.add(new JLabel(
-                AppWideStrings.cityString), "7,2");
+        JLabel lblCityString = new JLabel(AppWideStrings.cityString);
+        lblCityString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblCityString.setHorizontalAlignment(SwingConstants.RIGHT);
+        dispatcherUnitPanel.add(lblCityString, "7,2");
         dispatcherUnitPanel.add(dispatchCityPanel, "9,2");
         //
-        dispatcherUnitPanel.add(new JLabel(
-                AppWideStrings.stationString), "11,2");
-        dispatcherUnitPanel.add(dispatchStationNamePanel, "13,2");
+        JLabel lblStationString = new JLabel(AppWideStrings.stationString);
+        lblStationString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblStationString.setHorizontalAlignment(SwingConstants.RIGHT);
+        dispatcherUnitPanel.add(lblStationString, "11,2");
+        dispatcherUnitPanel.add(dispatchStationPanel, "13,2");
         //
-        dispatcherUnitPanel.add(new JLabel(
-                AppWideStrings.streetString), "15,2");
+        JLabel lblStreetString = new JLabel(AppWideStrings.streetString);
+        lblStreetString.setFont(Roboto.MEDIUM.deriveFont(12.0f));
+        lblStreetString.setHorizontalAlignment(SwingConstants.RIGHT);
+        dispatcherUnitPanel.add(lblStreetString, "15,2");
         dispatcherUnitPanel.add(dispatchStreetAddressPanel, "17,2");
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        putAddButtonsInEnabledMode(false);
+        putPoliceCoveredInEditMode(false);
+        putFireCoveredInEditMode(false);
+        putEmtCoveredInEditMode(false);
+        saveProfileButton.setEnabled(false);
+        editProfileButton.setEnabled(true);
+    }
+
+    private void initStationData() {
+        policeRowsModelList = appWideCallsService.getDispatchStationList(0);
+        fireRowsModelList = appWideCallsService.getDispatchStationList(1);
+        emtRowsModelList = appWideCallsService.getDispatchStationList(2);
+    }
+    private void initDepartmentInfoComponents() {
+        double[][] policeDepartmentsCoveredLayoutspec = new double[][] { {
+                // Columns
+                20, 3, TableLayout.PREFERRED, // Police Departments Covered
+                TableLayout.FILL, // empty space to the right
+                100, // Icon for add new row
+                30
+        }, {
+                // Rows
+                TableLayout.PREFERRED, // Police Departments Covered
+                TableLayout.FILL, // GridLayout DispatchCoverageFieldsPanel list of Dept # - Dept name
+                40
+        } };
+
+        policeDepartmentsCoveredPanel = new JPanel(new TableLayout(
+                policeDepartmentsCoveredLayoutspec));
+        policeDepartmentsCoveredPanel.setBackground(
+                AppWideStrings.panelBackgroundColor);
+
+        coveragePoliceAdd = new MaterialPanel();
+        coveragePoliceAdd.setLayout(new GridLayout(0, 1));
+        coveragePoliceAdd.setBackground(AppWideStrings.panelBackgroundColor);
+
+        JLabel lblPoliceDepartmentInfoString = new JLabel(AppWideStrings.dispatchOperatorPoliceDepartmentsCoveredLabelString);
+        lblPoliceDepartmentInfoString.setFont(Roboto.BOLD.deriveFont(12.0f));
+
+        policeDepartmentsCoveredPanel.add(lblPoliceDepartmentInfoString, "2,0");
+
+        addPoliceRowButton = new MaterialButton("ADD", new Color(47, 128, 237), Color.WHITE, new Color(9, 90, 220));
+        addPoliceRowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                DispatchStationModel model = new DispatchStationModel();
+                addThisDispatcherCoveredFieldsToPoliceCoverage(model);
+            }
+        });
+        coveragePoliceAdd.add(addPoliceRowButton);
+
+        policeDepartmentsCoveredPanel.add(coveragePoliceAdd, "4,2");
+        policeSpecificDepartmentsPanel = new JPanel(new GridLayout(0, 1));
+        policeDepartmentsCoveredPanel.add(policeSpecificDepartmentsPanel, "2,1,5,1");
+
+        double[][] fireDepartmentCoveredLayoutspec = new double[][] { {
+                // Columns
+                20, 3, TableLayout.PREFERRED, // Fire Departments Covered
+                TableLayout.FILL, // empty space to the right
+                100, // Icon for add new row
+                30
+        }, {
+                // Rows
+                TableLayout.PREFERRED, // Fire Departments Covered
+                TableLayout.FILL, // GridLayout DispatchCoverageFieldsPanel list of Dept # - Dept name
+                40
+        } };
+
+        fireDepartmentsCoveredPanel = new JPanel(new TableLayout(
+                fireDepartmentCoveredLayoutspec));
+        fireDepartmentsCoveredPanel.setBackground(
+                AppWideStrings.panelBackgroundColor);
+
+        coverageFireAdd = new MaterialPanel();
+        coverageFireAdd.setLayout(new GridLayout(0, 1));
+        coverageFireAdd.setBackground(AppWideStrings.panelBackgroundColor);
+
+        JLabel lblFireDepartmentInfoString = new JLabel(AppWideStrings.dispatchOperatorFireDepartmentsCoveredLabelString);
+        lblFireDepartmentInfoString.setFont(Roboto.BOLD.deriveFont(12.0f));
+        fireDepartmentsCoveredPanel.add(lblFireDepartmentInfoString, "2,0");
+
+        addFireRowButton = new MaterialButton("ADD", new Color(47, 128, 237), Color.WHITE, new Color(9, 90, 220));
+
+        addFireRowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                DispatchStationModel model = new DispatchStationModel();
+                addThisDispatcherCoveredFieldsToFireCoverage(model);
+            }
+        });
+        coverageFireAdd.add(addFireRowButton);
+
+        fireDepartmentsCoveredPanel.add(coverageFireAdd, "4,2");
+        fireSpecificDepartmentsPanel = new JPanel(new GridLayout(0, 1));
+        fireDepartmentsCoveredPanel.add(fireSpecificDepartmentsPanel, "2,1,5,1");
+
+        double[][] emtCoveredLayoutspec = new double[][] { {
+                // Columns
+                20, 3, TableLayout.PREFERRED, // EMT Units Covered
+                TableLayout.FILL, // empty space to the right
+                100, // Icon for add new row
+                30
+        }, {
+                // Rows
+                TableLayout.PREFERRED, // EMT Units Covered
+                TableLayout.FILL, // GridLayout DispatchCoverageFieldsPanel list of Dept # - Dept name
+                40
+        } };
+
+        emtCoveredPanel = new JPanel(new TableLayout(emtCoveredLayoutspec));
+        emtCoveredPanel.setBackground(
+                AppWideStrings.panelBackgroundColor);
+
+        coverageEmtAdd = new MaterialPanel();
+        coverageEmtAdd.setLayout(new GridLayout(0, 1));
+        coverageEmtAdd.setBackground(AppWideStrings.panelBackgroundColor);
+
+        JLabel lblEmtInfoString = new JLabel(AppWideStrings.dispatchOperatorEMTCoveredLabelString);
+        lblEmtInfoString.setFont(Roboto.BOLD.deriveFont(12.0f));
+        emtCoveredPanel.add(lblEmtInfoString, "2,0");
+
+        addEmtRowButton = new MaterialButton("ADD", new Color(47, 128, 237), Color.WHITE, new Color(9, 90, 220));
+
+        addEmtRowButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                DispatchStationModel model = new DispatchStationModel();
+                addThisDispatcherCoveredFieldsToEmtCoverage(model);
+            }
+        });
+        coverageEmtAdd.add(addEmtRowButton);
+
+        emtCoveredPanel.add(coverageEmtAdd, "4,2");
+        emtSpecificUnitsPanel = new JPanel(new GridLayout(0, 1));
+        emtCoveredPanel.add(emtSpecificUnitsPanel, "2,1,5,1");
+    }
+
+    private void initFooterComponents() {
+        double[][] footerLayoutspec = new double[][] { {
+                // Columns
+                20,  //0, Left Spacing
+                80,  //1, Edit Button
+                20,  //2, Spacing
+                80,  //3, Save Button
+                TableLayout.FILL,  //4, empty space to the right
+                186,  //5, Deactivate Button
+                20  //6, Right Spacing
+        }, {
+                12,
+                36
+        } };
+
+        footerPanel = new JPanel(new TableLayout(footerLayoutspec));
+        footerPanel.setOpaque(false);
+
+        editProfileButton = new MaterialButton("EDIT", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
+        saveProfileButton = new MaterialButton("SAVE", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
+        deactiveProfileButton = new MaterialButton("DEACTIVATE PROFILE", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
+
+        editProfileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                handleEditButtonClicked();
+            }
+        });
+        footerPanel.add(editProfileButton, "1,1");
+        footerPanel.add(saveProfileButton, "3,1");
+        footerPanel.add(deactiveProfileButton, "5,1");
+    }
+
+    private void initComponents() {
+        initStationData();
+        initDispatcherInfoComponents();
+        initDepartmentInfoComponents();
+        initFooterComponents();
+        showDispatcherAndCoverageUiDataModel();
 
         double[][] layoutSpecTopBottomFillSpec = new double[][] { {
                 // Columns
@@ -255,9 +461,9 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
                 TableLayout.PREFERRED, // State, City, Dispatch Station, Mailing address
                 10,
                 TableLayout.PREFERRED, // Has Police Departments Covered
-                20,
+                5,
                 TableLayout.PREFERRED, // Has Fire Departments Covered
-                20,
+                5,
                 TableLayout.PREFERRED, // Has Emergency Medical Technicians Covered
                 TableLayout.FILL, // Bottom stretches, making everything above be preferred heights
                 TableLayout.PREFERRED, // All fields must be filled in to ...
@@ -271,24 +477,142 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         detailTopBottomFillPanel.setBackground(AppWideStrings.panelBackgroundColor);
         detailTopBottomFillPanel.add(dispatcherInfoPanel, "0,0,2,0");
         detailTopBottomFillPanel.add(dispatcherUnitPanel, "0,2,2,2");
-    }
-    private void initComponents() {
-        initDispatcherInfoComponents();
+        detailTopBottomFillPanel.add(policeDepartmentsCoveredPanel, "0,4,2,4");
+        detailTopBottomFillPanel.add(fireDepartmentsCoveredPanel, "0,6,2,6");
+        detailTopBottomFillPanel.add(emtCoveredPanel, "0,8,2,8");
         getCenterPane().setLayout(new BorderLayout());
         getCenterPane().setBackground(AppWideStrings.panelBackgroundColor);
         getCenterPane().add(detailTopBottomFillPanel, BorderLayout.CENTER);
+        getBottomPane().setLayout(new BorderLayout());
+        getBottomPane().add(footerPanel, BorderLayout.CENTER);
     }
 
-    static class ColorArrowUI extends BasicComboBoxUI {
-        public static ColorArrowUI createUI(JComponent c) {
-            return new ColorArrowUI();
+    public void addThisDispatcherCoveredFieldsToPoliceCoverage(DispatchStationModel model) {
+
+        DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                new DispatchCoverageFieldsPanel(appWideCallsService, customizedUiWidgetsFactory,
+                        policeSpecificDepartmentsPanel);
+
+        aDispatchCoverageFieldsPanel.setDispatcherCoveredFields(model);
+
+        policeSpecificDepartmentsPanel.add(aDispatchCoverageFieldsPanel);
+        policeSpecificDepartmentsPanel.revalidate();
+    }
+
+    public void addThisDispatcherCoveredFieldsToFireCoverage(DispatchStationModel model) {
+
+        DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                new DispatchCoverageFieldsPanel(appWideCallsService, customizedUiWidgetsFactory,
+                        fireSpecificDepartmentsPanel);
+
+        aDispatchCoverageFieldsPanel.setDispatcherCoveredFields(model);
+
+        fireSpecificDepartmentsPanel.add(aDispatchCoverageFieldsPanel);
+        fireSpecificDepartmentsPanel.revalidate();
+    }
+
+    public void addThisDispatcherCoveredFieldsToEmtCoverage(DispatchStationModel model) {
+
+        DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                new DispatchCoverageFieldsPanel(appWideCallsService, customizedUiWidgetsFactory,
+                        emtSpecificUnitsPanel);
+
+        aDispatchCoverageFieldsPanel.setDispatcherCoveredFields(model);
+
+        emtSpecificUnitsPanel.add(aDispatchCoverageFieldsPanel);
+        emtSpecificUnitsPanel.revalidate();
+    }
+
+    private void putAddButtonsInEnabledMode(boolean pEnabled) {
+        coverageEmtAdd.setVisible(pEnabled);
+        coverageFireAdd.setVisible(pEnabled);
+        coveragePoliceAdd.setVisible(pEnabled);
+    }
+
+    private void putPoliceCoveredInEditMode(boolean pEditable) {
+        for (int index = 0; index < policeSpecificDepartmentsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) policeSpecificDepartmentsPanel
+                            .getComponent(index);
+
+            aDispatchCoverageFieldsPanel.setFieldsEditable(pEditable);
+        }
+    }
+
+    private void putFireCoveredInEditMode(boolean pEditable) {
+        for (int index = 0; index < fireSpecificDepartmentsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) fireSpecificDepartmentsPanel
+                            .getComponent(index);
+
+            aDispatchCoverageFieldsPanel.setFieldsEditable(pEditable);
+        }
+    }
+
+    private void putEmtCoveredInEditMode(boolean pEditable) {
+        for (int index = 0; index < emtSpecificUnitsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) emtSpecificUnitsPanel
+                            .getComponent(index);
+
+            aDispatchCoverageFieldsPanel.setFieldsEditable(pEditable);
+        }
+    }
+
+    private void handleEditButtonClicked() {
+        putAddButtonsInEnabledMode(true);
+        putPoliceCoveredInEditMode(true);
+        putFireCoveredInEditMode(true);
+        putEmtCoveredInEditMode(true);
+        saveProfileButton.setEnabled(true);
+        editProfileButton.setEnabled(false);
+    }
+
+    public void showDispatcherAndCoverageUiDataModel() {
+//        try {
+//            dispatcherFullNameTextField.setText(jsonDispatch.getString("first_name") + "  " + jsonDispatch.getString("last_name"));
+//            dispatcherYourEmailTextField.setText(jsonDispatch.getString("user_email"));
+//            dispatcherYourIDTextField.setText(jsonDispatch.getString("user_id"));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        policeRowsModelList = appWideCallsService.getDispatchStationList(0);
+        fireRowsModelList = appWideCallsService.getDispatchStationList(1);
+        emtRowsModelList = appWideCallsService.getDispatchStationList(2);
+//        allDispatcherFieldsFilledIn = false;
+//        allPoliceFireEmtRowsComboBoxesFilledIn = true;
+
+
+        policeSpecificDepartmentsPanel.removeAll();
+        fireSpecificDepartmentsPanel.removeAll();
+        emtSpecificUnitsPanel.removeAll();
+
+
+        if (policeRowsModelList.size() != 0) {
+            for (int index = 0; index < policeRowsModelList.size(); index++) {
+                DispatchStationModel eachDispatcherCoveredFields = policeRowsModelList.get(index);
+                addThisDispatcherCoveredFieldsToPoliceCoverage(eachDispatcherCoveredFields);
+            }
         }
 
-        @Override protected JButton createArrowButton() {
-            return new BasicArrowButton(
-                    BasicArrowButton.SOUTH,
-                    Color.WHITE, Color.WHITE,
-                    Color.BLACK, Color.WHITE);
+        if (fireRowsModelList.size() != 0) {
+            for (int index = 0; index < fireRowsModelList.size(); index++) {
+                DispatchStationModel eachDispatcherCoveredFields = fireRowsModelList.get(index);
+                addThisDispatcherCoveredFieldsToFireCoverage(eachDispatcherCoveredFields);
+            }
         }
+
+        if (emtRowsModelList.size() != 0) {
+            for (int index = 0; index < emtRowsModelList.size(); index++) {
+                DispatchStationModel eachDispatcherCoveredFields = emtRowsModelList.get(index);
+                addThisDispatcherCoveredFieldsToEmtCoverage(eachDispatcherCoveredFields);
+            }
+        }
+//        putDispatcherFieldsInEditMode(false);
+        putAddButtonsInEnabledMode(false);
+        putPoliceCoveredInEditMode(false);
+        putFireCoveredInEditMode(false);
+        putEmtCoveredInEditMode(false);
     }
 }

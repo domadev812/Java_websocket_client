@@ -78,6 +78,10 @@ public class BaseDialog extends JDialog implements ActionListener{
     public JPanel getCenterPane() {
         return centerPane;
     }
+    public JPanel getBottomPane() {
+        return bottomPane;
+    }
+
     public void setBottomVisible(boolean flag) {
         bottomPane.setVisible(flag);
     }

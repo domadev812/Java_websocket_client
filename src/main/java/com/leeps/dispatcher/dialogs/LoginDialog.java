@@ -147,7 +147,7 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         panBody.add(panError, gbc_pane_error);
 
         panError.add(lblErrorMessage);
-        lblErrorMessage.setFont(common.getRobotoFont(14.0f));
+        lblErrorMessage.setFont(common.getRobotoBoldFont(14.0f));
         lblErrorMessage.setForeground(Color.RED);
 
         JPanel panBottom = new JPanel();
@@ -195,18 +195,18 @@ public class LoginDialog extends BaseDialog implements ActionListener{
     }
 
     private void login() {
-//        JSONObject jsonObject = new JSONObject();
-//
-//        try {
-//            jsonObject.put(KeyStrings.keyAction, KeyStrings.actionLogin);
-//            jsonObject.put(KeyStrings.keyEmail, txtEmail.getText());
-//            jsonObject.put(KeyStrings.keyPassword, String.valueOf(txtPassword.getPassword()));
-//            appWideCallsService.sendToServer(jsonObject);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        dispose();
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(KeyStrings.keyAction, KeyStrings.actionLogin);
+            jsonObject.put(KeyStrings.keyEmail, txtEmail.getText());
+            jsonObject.put(KeyStrings.keyPassword, String.valueOf(txtPassword.getPassword()));
+            appWideCallsService.sendToServer(jsonObject);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        dispose();
     }
 
     public void showErrorMessage(String errorMessage) {
