@@ -281,22 +281,13 @@ public class DispatchCoverageFieldsPanel extends JPanel {
         boolean allFieldsFilledIn = true;
         DispatchStationModel model = new DispatchStationModel();
         if(indState == -1)
-        {
             allFieldsFilledIn = false;
-            coverageStateComboBox.setBackground(Color.RED);
-        }
 
         if(indCity == -1 || indCity == 0)
-        {
             allFieldsFilledIn = false;
-            coverageCityComboBox.setBackground(Color.RED);
-        }
 
         if(indStation == -1 || indStation == 0)
-        {
             allFieldsFilledIn = false;
-            coverageStationComboBox.setBackground(Color.RED);
-        }
 
         if(!allFieldsFilledIn) model = null;
         else {
@@ -319,18 +310,11 @@ public class DispatchCoverageFieldsPanel extends JPanel {
         return model;
     }
 
-    protected void setAllEditableFieldsRed(boolean pMakeRed) {
-        if (pMakeRed) {
-            coverageStateComboBox.setBackground(Color.RED);
-            coverageCityComboBox.setBackground(Color.RED);
-            coverageStationComboBox.setBackground(Color.RED);
+    public void setAllEditableFieldsRed(boolean pMakeRed) {
+        if (pMakeRed)
             coverageAddressLabel.setForeground(Color.RED);
-        } else {
-            coverageStateComboBox.setBackground(Color.WHITE);
-            coverageCityComboBox.setBackground(Color.WHITE);
-            coverageStationComboBox.setBackground(Color.WHITE);
+         else
             coverageAddressLabel.setForeground(Color.BLACK);
-        }
     }
 
     private void handleDeleteRowButtonClicked() {

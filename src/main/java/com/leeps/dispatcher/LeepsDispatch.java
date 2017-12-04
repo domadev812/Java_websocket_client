@@ -30,7 +30,6 @@ public class LeepsDispatch {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             handleSetLookAndFeelException(ex);
         }
-
         customizeUiComponents();
 
         appFrame = new AppFrame();
@@ -52,5 +51,6 @@ public class LeepsDispatch {
         Font oldTextFieldFont = UIManager.getFont("TextField.font");
         UIManager.put("TextField.font",
                 oldTextFieldFont.deriveFont((float) 12.0));
+
     }
 }

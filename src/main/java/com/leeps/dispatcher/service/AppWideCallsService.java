@@ -1,10 +1,12 @@
 package com.leeps.dispatcher.service;
 
 import com.leeps.dispatcher.AppFrame;
+import com.leeps.dispatcher.panels.*;
 import com.leeps.dispatcher.uidatamodel.*;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +15,10 @@ import java.util.Locale;
 
 public class AppWideCallsService {
     private AppFrame appFrame;
+
+    private OfficerProfilePanel officerProfilePanel;
+    private OfficerLocationMapPanel officerLocationMapPanel;
+    private OfficerStatusGraphPanel officerStatusGraphPanel;
 
     public AppWideCallsService() {
     }
@@ -106,4 +112,46 @@ public class AppWideCallsService {
         }
         return list;
     }
+
+    public boolean stringIsNullOrEmpty(String pString) {
+        if ((pString == null) || (pString.length() < 1)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public JSONObject getDispatcher(){return appFrame.getDispatchObject();}
+    public void setDispatchStation(ArrayList<DispatchStationModel> list){
+        appFrame.setDispatchStationList(list);
+    }
+
+    public void setOfficerProfilePanel(OfficerProfilePanel pOfficerProfilePanel) {
+        officerProfilePanel = pOfficerProfilePanel;
+    }
+
+    public void setOfficerLocationMapPanel(OfficerLocationMapPanel pOfficerLocationMapPanel) {
+        officerLocationMapPanel = pOfficerLocationMapPanel;
+    }
+
+    public void setOfficerStatusGraphPanel(OfficerStatusGraphPanel pOfficerStatusGraphPanel) {
+        officerStatusGraphPanel = pOfficerStatusGraphPanel;
+    }
+
+    public void setCurrentOfficerPicBufferedImage(BufferedImage pBufferedImage) {
+        officerProfilePanel.setCurrentOfficerPicBufferedImage(pBufferedImage);
+    }
+
+    public void showOfficerProfileUiDataModel(JSONObject handledOfficer) {
+        officerProfilePanel.showOfficerProfileUiDataModel(handledOfficer);
+    }
+
+    public boolean isHandled() {return appFrame.isHandled();}
+    public void setHandled(boolean isHandled){appFrame.setHandled(isHandled);}
+
+    public void setLat(double lat){appFrame.setLat(lat);}
+    public double getLat(){return appFrame.getLat();}
+
+    public void setLon(double lon){appFrame.setLon(lon);}
+    public double getLon(){return appFrame.getLon();}
 }

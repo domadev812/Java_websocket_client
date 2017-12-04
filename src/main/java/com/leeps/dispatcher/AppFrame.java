@@ -3,8 +3,12 @@ package com.leeps.dispatcher;
 import com.leeps.dispatcher.common.*;
 import com.leeps.dispatcher.dialogs.*;
 import com.leeps.dispatcher.material.MaterialButton;
+import com.leeps.dispatcher.panels.OfficerLocationMapPanel;
+import com.leeps.dispatcher.panels.OfficerProfilePanel;
+import com.leeps.dispatcher.panels.OfficerStatusGraphPanel;
 import com.leeps.dispatcher.service.*;
 import com.leeps.dispatcher.uidatamodel.*;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -14,6 +18,7 @@ import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +39,9 @@ public class AppFrame extends JFrame {
     // Dispatcher Profile Variable
     private int dispatcherID;
     private JSONObject dispatcherProfile = new JSONObject();
+    JSONObject handledOfficer = null;
+    boolean isHandled;
+    double lat = 40.126936, lon = 124.394631;
 
     //Service and Constant Class Variable
     private AppWideCallsService appWideCallsService;
@@ -58,7 +66,7 @@ public class AppFrame extends JFrame {
     private JMenu windowMenu;
     private JMenu helpMenu;
     private MaterialButton alarmsPendingButton;
-
+    private BaseMenuItem currentMenuItem = null;
     //UI Component
     private LoginDialog loginDialog;
     private DispatcherProfileDialog dispatcherProfileDialog = null;
@@ -78,6 +86,12 @@ public class AppFrame extends JFrame {
     private ArrayList<StationModel> listStation = new ArrayList<StationModel>();
     private ArrayList<DispatchStationModel> listDispatcherStation = new ArrayList<DispatchStationModel>();
 
+    private OfficerStatusGraphPanel officerStatusGraphPanel;
+    private OfficerLocationMapPanel officerLocationMapPanel;
+    private OfficerProfilePanel officerProfilePanel;
+    private JSplitPane hasLeftAndRightPanelsJSplitPane;
+    private JSplitPane hasTopAndBottomPanelsJSplitPane;
+
     //Socket Variables
     private Socket socket;
     final private String serverIP = "192.168.0.100";
@@ -87,7 +101,6 @@ public class AppFrame extends JFrame {
     public AppFrame() {
         thisAppFrame = this;
         //setUndecorated(true);
-
         appWideCallsService = new AppWideCallsService();
         appWideCallsService.setAppFrame(this);
 
@@ -107,6 +120,7 @@ public class AppFrame extends JFrame {
         loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
         loginDialog.setVisible(true);
 
+        isHandled = false;
         initCustomizedUiWidgetsFactory();
         initProperties();
         layoutUI();
@@ -135,6 +149,21 @@ public class AppFrame extends JFrame {
 
     public void setDispatchStationList(ArrayList<DispatchStationModel> mapDispatchStation) {this.listDispatcherStation = mapDispatchStation;}
     public ArrayList<DispatchStationModel> getDispatchStationList() {return this.listDispatcherStation;}
+
+    public JSONObject getDispatchObject() {return this.dispatcherProfile;}
+    public int getDispatcherID() {return dispatcherID;}
+
+    public void setHandledOfficer(JSONObject jsonObject){this.handledOfficer = jsonObject;}
+    public JSONObject getHandledOfficer() {return this.handledOfficer;}
+
+    public void setHandled(boolean isHandled) {this.isHandled = isHandled;}
+    public boolean isHandled() {return this.isHandled;}
+
+    public void setLat(double lat){this.lat = lat;}
+    public double getLat(){return this.lat;}
+
+    public void setLon(double lon){this.lon = lon;}
+    public double getLon(){return this.lon;}
     //Init Functions
     private void initProperties() {
         Properties aProperties = new Properties();
@@ -201,9 +230,11 @@ public class AppFrame extends JFrame {
 
     private void applyMenuEffect(final JMenu pJMenu) {
         pJMenu.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        pJMenu.setBackground(AppWideStrings.primaryColor);
+        pJMenu.setOpaque(true);
         pJMenu.setCursor(handPointingCursor);
         pJMenu.setForeground(Color.WHITE);
-        pJMenu.setFont(common.getRobotoBoldFont(14.0f));
+        pJMenu.setFont(Roboto.BOLD.deriveFont(14.0f));
         pJMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent pE) {
@@ -254,14 +285,40 @@ public class AppFrame extends JFrame {
 
         appMenuBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         dispatcherProfileMenu = new JMenu(AppWideStrings.menuBarDispatcherString);
+        dispatcherProfileMenu.setOpaque(true);
+        BaseMenuItem itemManage = new BaseMenuItem("MANAGE STATION");
+        BaseMenuItem itemPassword = new BaseMenuItem("CHANGE PASSWORD");
+        BaseMenuItem itemExit = new BaseMenuItem("EXIT");
+
+        dispatcherProfileMenu.add(itemManage);
+        dispatcherProfileMenu.add(itemPassword);
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBackground(AppWideStrings.primaryColor);
+        sep.setForeground(Color.WHITE);
+        sep.setOpaque(true);
+        dispatcherProfileMenu.add(sep);
+        dispatcherProfileMenu.add(itemExit);
+
         windowMenu = new JMenu(
                 AppWideStrings.menuBarWindowString);
+        final BaseMenuItem item24Display = new BaseMenuItem("24INCH DISPLAY");
+        final BaseMenuItem item27Display = new BaseMenuItem("27INCH DISPLAY");
+        windowMenu.add(item24Display);
+        windowMenu.add(item27Display);
+
         helpMenu = new JMenu(AppWideStrings.menuBarHelpString);
-
-        customizedUiWidgetsFactory.removeAllMouseListeners(dispatcherProfileMenu);
-        customizedUiWidgetsFactory.removeAllMouseListeners(windowMenu);
-        customizedUiWidgetsFactory.removeAllMouseListeners(helpMenu);
-
+        BaseMenuItem itemDisclaimer = new BaseMenuItem("DISCLAIMER");
+        BaseMenuItem itemPrivacy = new BaseMenuItem("PRIVACY");
+        BaseMenuItem itemTerms = new BaseMenuItem("TERMS");
+        BaseMenuItem itemFaq = new BaseMenuItem("FAQ");
+        helpMenu.add(itemDisclaimer);
+        helpMenu.add(itemPrivacy);
+        helpMenu.add(itemTerms);
+        helpMenu.add(itemFaq);
+//        customizedUiWidgetsFactory.removeAllMouseListeners(dispatcherProfileMenu);
+//        customizedUiWidgetsFactory.removeAllMouseListeners(windowMenu);
+//        customizedUiWidgetsFactory.removeAllMouseListeners(helpMenu);
+//
         applyMenuEffect(dispatcherProfileMenu);
         applyMenuEffect(windowMenu);
         applyMenuEffect(helpMenu);
@@ -289,22 +346,50 @@ public class AppFrame extends JFrame {
         appMenuBar.add(helpMenu);
         appMenuBar.add(menuAlarmPendingPanel);
 
-        dispatcherProfileMenu.addMouseListener(new MouseAdapter() {
+        itemManage.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent pE) {
-                System.out.println("Visible Dialog");
                 dispatcherProfileDialog = new DispatcherProfileDialog(thisAppFrame,1120, 800, appWideCallsService);
-//                dispatcherProfileDialog.setVisible(true);
             }
         });
 
-        windowMenu.addMouseListener(new MouseAdapter() {
+        itemPassword.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent pE) {
-//                showMultiPanel();
+                new ChangePwdDialog(thisAppFrame,500, 420, appWideCallsService);
             }
         });
 
+        itemExit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                System.exit(0);
+            }
+        });
+
+        item24Display.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                if(currentMenuItem != null) {
+                    currentMenuItem.setForeground(Color.WHITE);
+                }
+                currentMenuItem = item24Display;
+                currentMenuItem.setForeground(Color.GREEN);
+                setBounds(appWideCallsService.positionAndSize24inchWideMonitor());
+            }
+        });
+
+        item27Display.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                if(currentMenuItem != null) {
+                    currentMenuItem.setForeground(Color.WHITE);
+                }
+                currentMenuItem = item27Display;
+                currentMenuItem.setForeground(Color.GREEN);
+                setBounds(appWideCallsService.positionAndSize27inchWideMonitor());
+            }
+        });
         helpMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent pE) {
@@ -314,7 +399,47 @@ public class AppFrame extends JFrame {
     }
 
     private void buildCenterPanel() {
+        officerStatusGraphPanel = new OfficerStatusGraphPanel(
+                customizedUiWidgetsFactory, appWideCallsService);
+        appWideCallsService.setOfficerStatusGraphPanel(officerStatusGraphPanel);
 
+        officerProfilePanel = new OfficerProfilePanel(appWideCallsService);
+        appWideCallsService.setOfficerProfilePanel(officerProfilePanel);
+        appWideCallsService.setCurrentOfficerPicBufferedImage(officerProfileImage);
+
+        officerLocationMapPanel = new OfficerLocationMapPanel(
+                appWideCallsService, customizedUiWidgetsFactory);
+        appWideCallsService.setOfficerLocationMapPanel(officerLocationMapPanel);
+
+        hasLeftAndRightPanelsJSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+        hasLeftAndRightPanelsJSplitPane.setLeftComponent(officerProfilePanel);
+        hasLeftAndRightPanelsJSplitPane.setRightComponent(officerLocationMapPanel);
+        hasLeftAndRightPanelsJSplitPane.setBorder(BorderFactory.createEmptyBorder());
+        JPanel theTopPanelOfTopBottomSplitPane = new JPanel(new GridLayout(0, 1));
+        theTopPanelOfTopBottomSplitPane.add(hasLeftAndRightPanelsJSplitPane);
+        theTopPanelOfTopBottomSplitPane.setBackground(Color.RED);
+        theTopPanelOfTopBottomSplitPane.setOpaque(true);
+        theTopPanelOfTopBottomSplitPane.setBorder(BorderFactory.createEmptyBorder());
+
+        hasTopAndBottomPanelsJSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+        hasTopAndBottomPanelsJSplitPane.setTopComponent(theTopPanelOfTopBottomSplitPane);
+        hasTopAndBottomPanelsJSplitPane.setBottomComponent(officerStatusGraphPanel);
+        hasTopAndBottomPanelsJSplitPane.setBackground(Color.RED);
+        hasTopAndBottomPanelsJSplitPane.setOpaque(true);
+        hasTopAndBottomPanelsJSplitPane.setBorder(BorderFactory.createEmptyBorder());
+
+        centerPanel = new JPanel();
+        centerPanel.setLayout(new CardLayout());
+        centerPanel.setBackground(Color.RED);
+        centerPanel.setOpaque(true);
+        centerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(
+                        0, 0, 0, 0),
+                BorderFactory.createLineBorder(Color.GRAY)));
+        centerPanel.add(hasTopAndBottomPanelsJSplitPane,
+                AppWideStrings.centerOfficerPanelCardLayoutKey);
+        hasTopAndBottomPanelsJSplitPane.setDividerSize(3);
+        hasLeftAndRightPanelsJSplitPane.setDividerSize(5);
     }
 
     private void buildBottomPanel() {
@@ -352,15 +477,23 @@ public class AppFrame extends JFrame {
 
     private void buildContentPanel() {
         contentPanel = new JPanel(new BorderLayout());
-//        contentPanel.add(centerPanel, BorderLayout.CENTER);
+        contentPanel.add(centerPanel, BorderLayout.CENTER);
         // contentPaneJPanel.add(topBarPanel, BorderLayout.NORTH);
         contentPanel.add(bottomPanel, BorderLayout.SOUTH);
+        showHandledOfficer();
     }
     // UI Component Choose Functions
     private void showHandledOfficer() {
-
+        System.out.println("Show Officer Profile");
+        ((CardLayout) (centerPanel.getLayout())).show(
+                centerPanel, AppWideStrings.centerOfficerPanelCardLayoutKey);
+        appWideCallsService.showOfficerProfileUiDataModel(handledOfficer);
+        showAssistanceMap();
     }
 
+    public void showAssistanceMap() {
+//        officerLocationMapPanel.uponShowPanelChooseXy();
+    }
     //Callback Process Functions
     public void logIn(int errorCode, JSONObject jsonObject)     //Login CallBack
     {
@@ -371,7 +504,6 @@ public class AppFrame extends JFrame {
                 e.printStackTrace();
             }
             dispatcherProfile = jsonObject;
-            showHandledOfficer();
             loginDialog.dispose();
         } else {
             loginDialog.showErrorMessage("E-Mail or Password is incorrect.");

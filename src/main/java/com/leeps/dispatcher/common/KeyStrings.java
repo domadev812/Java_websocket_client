@@ -16,7 +16,10 @@ public interface KeyStrings {
     //JSON Key
     String keyErrorCode = "errorCode";
     String keyID = "id";
-    String keyEmail = "email";
+    String keyEmail = "user_email";
+    String keyFirstName = "first_name";
+    String keyLastName = "last_name";
+    String keyUserID = "user_id";
     String keyPassword = "password";
     String keyStateList = "state_list";
     String keyStateName = "state_name";
@@ -27,6 +30,7 @@ public interface KeyStrings {
     String keyCityID = "city_id";
     String keyCityName = "city_name";
     String keyDispatchStationList = "dispatch_station_list";
+    String keySetDispatchStation = "set_dispatch_station_list";
     String keyOfficerID = "officerId";
     String keyDispatcherID = "dispatcherId";
     String keyZipCode = "zip_code";
@@ -38,4 +42,20 @@ public interface KeyStrings {
     String keyStationList = "station_list";
     String keyStationID = "station_id";
     String keyType = "type";
+    String keyValues = "values";
+
+    String keyDispatchActive = "dispatch_active";
+    String keyActiveFlag = "active_dispatcher_flag";
+
+    String keyPhoneNumber = "phone_number";
+    String keyRank = "rank";
+    String keyGender = "gender";
+    String keyRace = "race";
+    String keyHeight = "height";
+    String keyBloodType = "blood_type";
+    String keyAllergy = "allergy";
+    String keyContactPhone = "contact_number";
+    String keyContactRelation = "contact_relation";
+    String keyWeight = "weight";
+    String keyBadgeNumber = "badge_number";
 }

@@ -1,6 +1,7 @@
 package com.leeps.dispatcher.dialogs;
 
 import com.leeps.dispatcher.common.AppWideStrings;
+import com.leeps.dispatcher.common.KeyStrings;
 import com.leeps.dispatcher.material.MaterialButton;
 import com.leeps.dispatcher.panels.DispatchCoverageFieldsPanel;
 import com.leeps.dispatcher.service.*;
@@ -10,7 +11,9 @@ import de.craften.ui.swingmaterial.MaterialPanel;
 import de.craften.ui.swingmaterial.fonts.Roboto;
 import layout.TableLayout;
 import org.jdesktop.swingx.border.DropShadowBorder;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,10 +28,14 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
     private static final long serialVersionUID = 1L;
     private AppWideCallsService appWideCallsService;
     private CustomizedUiWidgetsFactory customizedUiWidgetsFactory;
-    private boolean editFlag = false;
+    private boolean flagRowsField;
+
+    int dispatcherID = 0;
+    boolean dispatcherFlag = false;
+    JSONObject jsonDispatch = new JSONObject();
+    boolean activeFlag = true;
 
     private JPanel detailTopBottomFillPanel;
-
     private JPanel dispatcherInfoPanel;
 
     private JTextField dispatcherFullNameTextField;
@@ -46,9 +53,9 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
     private JPanel fireDepartmentsCoveredPanel;
     private JPanel emtCoveredPanel;
 
-    private JPanel policeSpecificDepartmentsPanel;
-    private JPanel fireSpecificDepartmentsPanel;
-    private JPanel emtSpecificUnitsPanel;
+    private JPanel policeStationsPanel;
+    private JPanel fireStationsPanel;
+    private JPanel emtStationsPanel;
 
     private JPanel footerPanel;
     private MaterialButton editProfileButton;
@@ -59,10 +66,11 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
     private MaterialButton addPoliceRowButton;
     private MaterialButton addFireRowButton;
     private MaterialButton addEmtRowButton;
+    private JLabel alertLabel;
 
-    private ArrayList<DispatchStationModel> policeRowsModelList;
-    private ArrayList<DispatchStationModel> fireRowsModelList;
-    private ArrayList<DispatchStationModel> emtRowsModelList;
+    private ArrayList<DispatchStationModel> policeStationList;
+    private ArrayList<DispatchStationModel> fireStationList;
+    private ArrayList<DispatchStationModel> emtStationList;
 
     public DispatcherProfileDialog(JFrame parentFrame, int width, int height, AppWideCallsService pAppWideCallsService) {
         super(parentFrame, width, height);
@@ -269,24 +277,19 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         lblStreetString.setHorizontalAlignment(SwingConstants.RIGHT);
         dispatcherUnitPanel.add(lblStreetString, "15,2");
         dispatcherUnitPanel.add(dispatchStreetAddressPanel, "17,2");
+
+        try {
+            String fullName = jsonDispatch.getString(KeyStrings.keyFirstName) + " " + jsonDispatch.getString(KeyStrings.keyLastName);
+            String email = jsonDispatch.getString(KeyStrings.keyEmail);
+            String userID = jsonDispatch.getString(KeyStrings.keyUserID);
+            dispatcherFullNameTextField.setText(fullName.toUpperCase());
+            dispatcherEmailTextField.setText(email.toUpperCase());
+            dispatcherIDTextField.setText(userID.toUpperCase());
+        } catch (JSONException e) {
+
+        }
     }
 
-    @Override
-    public void addNotify() {
-        super.addNotify();
-        putAddButtonsInEnabledMode(false);
-        putPoliceCoveredInEditMode(false);
-        putFireCoveredInEditMode(false);
-        putEmtCoveredInEditMode(false);
-        saveProfileButton.setEnabled(false);
-        editProfileButton.setEnabled(true);
-    }
-
-    private void initStationData() {
-        policeRowsModelList = appWideCallsService.getDispatchStationList(0);
-        fireRowsModelList = appWideCallsService.getDispatchStationList(1);
-        emtRowsModelList = appWideCallsService.getDispatchStationList(2);
-    }
     private void initDepartmentInfoComponents() {
         double[][] policeDepartmentsCoveredLayoutspec = new double[][] { {
                 // Columns
@@ -326,8 +329,8 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         coveragePoliceAdd.add(addPoliceRowButton);
 
         policeDepartmentsCoveredPanel.add(coveragePoliceAdd, "4,2");
-        policeSpecificDepartmentsPanel = new JPanel(new GridLayout(0, 1));
-        policeDepartmentsCoveredPanel.add(policeSpecificDepartmentsPanel, "2,1,5,1");
+        policeStationsPanel = new JPanel(new GridLayout(0, 1));
+        policeDepartmentsCoveredPanel.add(policeStationsPanel, "2,1,5,1");
 
         double[][] fireDepartmentCoveredLayoutspec = new double[][] { {
                 // Columns
@@ -367,8 +370,8 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         coverageFireAdd.add(addFireRowButton);
 
         fireDepartmentsCoveredPanel.add(coverageFireAdd, "4,2");
-        fireSpecificDepartmentsPanel = new JPanel(new GridLayout(0, 1));
-        fireDepartmentsCoveredPanel.add(fireSpecificDepartmentsPanel, "2,1,5,1");
+        fireStationsPanel = new JPanel(new GridLayout(0, 1));
+        fireDepartmentsCoveredPanel.add(fireStationsPanel, "2,1,5,1");
 
         double[][] emtCoveredLayoutspec = new double[][] { {
                 // Columns
@@ -407,8 +410,8 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         coverageEmtAdd.add(addEmtRowButton);
 
         emtCoveredPanel.add(coverageEmtAdd, "4,2");
-        emtSpecificUnitsPanel = new JPanel(new GridLayout(0, 1));
-        emtCoveredPanel.add(emtSpecificUnitsPanel, "2,1,5,1");
+        emtStationsPanel = new JPanel(new GridLayout(0, 1));
+        emtCoveredPanel.add(emtStationsPanel, "2,1,5,1");
     }
 
     private void initFooterComponents() {
@@ -429,8 +432,8 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         footerPanel = new JPanel(new TableLayout(footerLayoutspec));
         footerPanel.setOpaque(false);
 
-        editProfileButton = new MaterialButton("EDIT", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
-        saveProfileButton = new MaterialButton("SAVE", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
+        editProfileButton = new MaterialButton(AppWideStrings.buttonTextEditString, new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
+        saveProfileButton = new MaterialButton(AppWideStrings.buttonTextSaveString, new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
         deactiveProfileButton = new MaterialButton("DEACTIVATE PROFILE", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
 
         editProfileButton.addActionListener(new ActionListener() {
@@ -439,13 +442,70 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
                 handleEditButtonClicked();
             }
         });
+        saveProfileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                handleSaveButtonClicked();
+            }
+        });
+        deactiveProfileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent pE) {
+                if(activeFlag) {
+                    activeFlag = false;
+                    deactiveProfileButton.setText(AppWideStrings.buttonTextActivateProfileString);
+                }else{
+                    activeFlag = true;
+                    deactiveProfileButton.setText(AppWideStrings.buttonTextDeactivateProfileString);
+                }
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(KeyStrings.keyAction, KeyStrings.keyDispatchActive);
+                    jsonObject.put(KeyStrings.keyDispatcherID, dispatcherID);
+                    jsonObject.put(KeyStrings.keyActiveFlag, activeFlag);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                appWideCallsService.sendToServer(jsonObject);
+//                appWideCallsService.sendToServer(jsonObject);
+            }
+        });
         footerPanel.add(editProfileButton, "1,1");
         footerPanel.add(saveProfileButton, "3,1");
         footerPanel.add(deactiveProfileButton, "5,1");
     }
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        changeAddButtonState(false);
+        changePoliceCoveredEditMode(false);
+        changeFireCoveredEditMode(false);
+        changeEmtCoveredEditMode(false);
+        saveProfileButton.setEnabled(false);
+        editProfileButton.setEnabled(true);
+    }
+
+    private void initData() {
+        flagRowsField = true;
+        policeStationList = appWideCallsService.getDispatchStationList(0);
+        fireStationList = appWideCallsService.getDispatchStationList(1);
+        emtStationList = appWideCallsService.getDispatchStationList(2);
+
+        if(!dispatcherFlag) {
+            jsonDispatch = appWideCallsService.getDispatcher();
+            System.out.println(jsonDispatch);
+            try {
+                dispatcherID = jsonDispatch.getInt(KeyStrings.keyID);
+            } catch (JSONException e) {
+                JOptionPane.showConfirmDialog(this, "Try again after restart app.");
+                System.exit(0);
+            }
+            dispatcherFlag = true;
+        }
+    }
 
     private void initComponents() {
-        initStationData();
+        initData();
         initDispatcherInfoComponents();
         initDepartmentInfoComponents();
         initFooterComponents();
@@ -471,6 +531,10 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
                 5,
                 TableLayout.PREFERRED // Has the bottom buttons
         } };
+        alertLabel = new JLabel("");
+        alertLabel.setForeground(Color.RED);
+        alertLabel.setFont(Roboto.BOLD.deriveFont(16.0f));
+        alertLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         detailTopBottomFillPanel = new JPanel(new TableLayout(layoutSpecTopBottomFillSpec));
         detailTopBottomFillPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -480,6 +544,7 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         detailTopBottomFillPanel.add(policeDepartmentsCoveredPanel, "0,4,2,4");
         detailTopBottomFillPanel.add(fireDepartmentsCoveredPanel, "0,6,2,6");
         detailTopBottomFillPanel.add(emtCoveredPanel, "0,8,2,8");
+        detailTopBottomFillPanel.add(alertLabel, "2,10");
         getCenterPane().setLayout(new BorderLayout());
         getCenterPane().setBackground(AppWideStrings.panelBackgroundColor);
         getCenterPane().add(detailTopBottomFillPanel, BorderLayout.CENTER);
@@ -491,68 +556,68 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
 
         DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
                 new DispatchCoverageFieldsPanel(appWideCallsService, customizedUiWidgetsFactory,
-                        policeSpecificDepartmentsPanel);
+                        policeStationsPanel);
 
         aDispatchCoverageFieldsPanel.setDispatcherCoveredFields(model);
 
-        policeSpecificDepartmentsPanel.add(aDispatchCoverageFieldsPanel);
-        policeSpecificDepartmentsPanel.revalidate();
+        policeStationsPanel.add(aDispatchCoverageFieldsPanel);
+        policeStationsPanel.revalidate();
     }
 
     public void addThisDispatcherCoveredFieldsToFireCoverage(DispatchStationModel model) {
 
         DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
                 new DispatchCoverageFieldsPanel(appWideCallsService, customizedUiWidgetsFactory,
-                        fireSpecificDepartmentsPanel);
+                        fireStationsPanel);
 
         aDispatchCoverageFieldsPanel.setDispatcherCoveredFields(model);
 
-        fireSpecificDepartmentsPanel.add(aDispatchCoverageFieldsPanel);
-        fireSpecificDepartmentsPanel.revalidate();
+        fireStationsPanel.add(aDispatchCoverageFieldsPanel);
+        fireStationsPanel.revalidate();
     }
 
     public void addThisDispatcherCoveredFieldsToEmtCoverage(DispatchStationModel model) {
 
         DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
                 new DispatchCoverageFieldsPanel(appWideCallsService, customizedUiWidgetsFactory,
-                        emtSpecificUnitsPanel);
+                        emtStationsPanel);
 
         aDispatchCoverageFieldsPanel.setDispatcherCoveredFields(model);
 
-        emtSpecificUnitsPanel.add(aDispatchCoverageFieldsPanel);
-        emtSpecificUnitsPanel.revalidate();
+        emtStationsPanel.add(aDispatchCoverageFieldsPanel);
+        emtStationsPanel.revalidate();
     }
 
-    private void putAddButtonsInEnabledMode(boolean pEnabled) {
+    private void changeAddButtonState(boolean pEnabled) {
         coverageEmtAdd.setVisible(pEnabled);
         coverageFireAdd.setVisible(pEnabled);
         coveragePoliceAdd.setVisible(pEnabled);
     }
 
-    private void putPoliceCoveredInEditMode(boolean pEditable) {
-        for (int index = 0; index < policeSpecificDepartmentsPanel.getComponentCount(); index++) {
+    private void changePoliceCoveredEditMode(boolean pEditable) {
+        for (int index = 0; index < policeStationsPanel.getComponentCount(); index++) {
             DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
-                    (DispatchCoverageFieldsPanel) policeSpecificDepartmentsPanel
+                    (DispatchCoverageFieldsPanel) policeStationsPanel
                             .getComponent(index);
 
             aDispatchCoverageFieldsPanel.setFieldsEditable(pEditable);
         }
     }
 
-    private void putFireCoveredInEditMode(boolean pEditable) {
-        for (int index = 0; index < fireSpecificDepartmentsPanel.getComponentCount(); index++) {
+    private void changeFireCoveredEditMode(boolean pEditable) {
+        for (int index = 0; index < fireStationsPanel.getComponentCount(); index++) {
             DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
-                    (DispatchCoverageFieldsPanel) fireSpecificDepartmentsPanel
+                    (DispatchCoverageFieldsPanel) fireStationsPanel
                             .getComponent(index);
 
             aDispatchCoverageFieldsPanel.setFieldsEditable(pEditable);
         }
     }
 
-    private void putEmtCoveredInEditMode(boolean pEditable) {
-        for (int index = 0; index < emtSpecificUnitsPanel.getComponentCount(); index++) {
+    private void changeEmtCoveredEditMode(boolean pEditable) {
+        for (int index = 0; index < emtStationsPanel.getComponentCount(); index++) {
             DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
-                    (DispatchCoverageFieldsPanel) emtSpecificUnitsPanel
+                    (DispatchCoverageFieldsPanel) emtStationsPanel
                             .getComponent(index);
 
             aDispatchCoverageFieldsPanel.setFieldsEditable(pEditable);
@@ -560,12 +625,71 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
     }
 
     private void handleEditButtonClicked() {
-        putAddButtonsInEnabledMode(true);
-        putPoliceCoveredInEditMode(true);
-        putFireCoveredInEditMode(true);
-        putEmtCoveredInEditMode(true);
+        changeAddButtonState(true);
+        changePoliceCoveredEditMode(true);
+        changeFireCoveredEditMode(true);
+        changeEmtCoveredEditMode(true);
         saveProfileButton.setEnabled(true);
+        alertLabel.setText("");
         editProfileButton.setEnabled(false);
+    }
+
+    private void handleSaveButtonClicked() {
+        flagRowsField = true;
+        checkPoliceRowsField();
+        checkFireRowsField();
+        checkEmtRowsField();
+
+        if (flagRowsField) {
+            if (hasDuplicateCoverageRows()) {
+                alertLabel.setText(AppWideStrings.dispatchOperatorThereAreDuplicateRows);
+            } else {
+                alertLabel.setText("");
+                saveDepartInfos();
+                System.out.println("Saved");
+            }
+
+        } else {
+            alertLabel.setText(
+                    AppWideStrings.dispatchOperatorAllFieldsMustBeFilledIn);
+            System.out.println("Blank Rows");
+        }
+    }
+
+    private void saveDepartInfos() {
+        unRedAllCoverageRowsFields();
+//        putDispatcherFieldsInEditMode(false);
+        changeAddButtonState(false);
+        changePoliceCoveredEditMode(false);
+        changeFireCoveredEditMode(false);
+        changeEmtCoveredEditMode(false);
+        saveProfileButton.setEnabled(false);
+        editProfileButton.setEnabled(true);
+        //TODO write to server
+        ArrayList<DispatchStationModel> newList = new ArrayList<DispatchStationModel>();
+        newList.addAll(policeStationList);
+        newList.addAll(fireStationList);
+        newList.addAll(emtStationList);
+        appWideCallsService.setDispatchStation(newList);
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(KeyStrings.keyAction, KeyStrings.keySetDispatchStation);
+            jsonObject.put(KeyStrings.keyDispatcherID, dispatcherID);
+            JSONArray jsonArray = new JSONArray();
+            for(int i = 0; i < newList.size(); i++)
+            {
+                DispatchStationModel model = newList.get(i);
+                JSONObject object = new JSONObject();
+                object.put(KeyStrings.keyStationID, model.getStation_id());
+                object.put(KeyStrings.keyType, model.getType());
+                jsonArray.put(object);
+            }
+            jsonObject.put(KeyStrings.keyValues, jsonArray);
+            appWideCallsService.sendToServer(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showDispatcherAndCoverageUiDataModel() {
@@ -577,42 +701,184 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
 //            e.printStackTrace();
 //        }
 
-        policeRowsModelList = appWideCallsService.getDispatchStationList(0);
-        fireRowsModelList = appWideCallsService.getDispatchStationList(1);
-        emtRowsModelList = appWideCallsService.getDispatchStationList(2);
+        policeStationList = appWideCallsService.getDispatchStationList(0);
+        fireStationList = appWideCallsService.getDispatchStationList(1);
+        emtStationList = appWideCallsService.getDispatchStationList(2);
 //        allDispatcherFieldsFilledIn = false;
-//        allPoliceFireEmtRowsComboBoxesFilledIn = true;
+        flagRowsField = true;
 
 
-        policeSpecificDepartmentsPanel.removeAll();
-        fireSpecificDepartmentsPanel.removeAll();
-        emtSpecificUnitsPanel.removeAll();
+        policeStationsPanel.removeAll();
+        fireStationsPanel.removeAll();
+        emtStationsPanel.removeAll();
 
-
-        if (policeRowsModelList.size() != 0) {
-            for (int index = 0; index < policeRowsModelList.size(); index++) {
-                DispatchStationModel eachDispatcherCoveredFields = policeRowsModelList.get(index);
+        if (policeStationList.size() != 0) {
+            for (int index = 0; index < policeStationList.size(); index++) {
+                DispatchStationModel eachDispatcherCoveredFields = policeStationList.get(index);
                 addThisDispatcherCoveredFieldsToPoliceCoverage(eachDispatcherCoveredFields);
             }
         }
 
-        if (fireRowsModelList.size() != 0) {
-            for (int index = 0; index < fireRowsModelList.size(); index++) {
-                DispatchStationModel eachDispatcherCoveredFields = fireRowsModelList.get(index);
+        if (fireStationList.size() != 0) {
+            for (int index = 0; index < fireStationList.size(); index++) {
+                DispatchStationModel eachDispatcherCoveredFields = fireStationList.get(index);
                 addThisDispatcherCoveredFieldsToFireCoverage(eachDispatcherCoveredFields);
             }
         }
 
-        if (emtRowsModelList.size() != 0) {
-            for (int index = 0; index < emtRowsModelList.size(); index++) {
-                DispatchStationModel eachDispatcherCoveredFields = emtRowsModelList.get(index);
+        if (emtStationList.size() != 0) {
+            for (int index = 0; index < emtStationList.size(); index++) {
+                DispatchStationModel eachDispatcherCoveredFields = emtStationList.get(index);
                 addThisDispatcherCoveredFieldsToEmtCoverage(eachDispatcherCoveredFields);
             }
         }
 //        putDispatcherFieldsInEditMode(false);
-        putAddButtonsInEnabledMode(false);
-        putPoliceCoveredInEditMode(false);
-        putFireCoveredInEditMode(false);
-        putEmtCoveredInEditMode(false);
+        changeAddButtonState(false);
+        changePoliceCoveredEditMode(false);
+        changeFireCoveredEditMode(false);
+        changeEmtCoveredEditMode(false);
+    }
+
+    private void checkPoliceRowsField() {
+        policeStationList.clear();
+        for (int index = 0; index < policeStationsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) policeStationsPanel
+                            .getComponent(index);
+
+            DispatchStationModel aCoverageUiDataModel =
+                    aDispatchCoverageFieldsPanel.getDispatcherCoveredFields(0);
+            if(aCoverageUiDataModel == null) flagRowsField = false;
+            policeStationList.add(aCoverageUiDataModel);
+        }
+    }
+
+    private void checkFireRowsField() {
+        fireStationList.clear();
+        for (int index = 0; index < fireStationsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) fireStationsPanel
+                            .getComponent(index);
+
+            DispatchStationModel aCoverageUiDataModel =
+                    aDispatchCoverageFieldsPanel.getDispatcherCoveredFields(1);
+            if(aCoverageUiDataModel == null) flagRowsField = false;
+            fireStationList.add(aCoverageUiDataModel);
+        }
+    }
+
+    private void checkEmtRowsField() {
+        emtStationList.clear();
+        for (int index = 0; index < emtStationsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) emtStationsPanel
+                            .getComponent(index);
+
+            DispatchStationModel aCoverageUiDataModel =
+                    aDispatchCoverageFieldsPanel.getDispatcherCoveredFields(2);
+            if(aCoverageUiDataModel == null) flagRowsField = false;
+            emtStationList.add(aCoverageUiDataModel);
+        }
+    }
+
+    private boolean hasDuplicateCoverageRows() {
+        boolean theresDuplicateCoverageRows = false;
+        int policeRowsCount = policeStationList.size();
+        if(policeRowsCount >= 2)
+        {
+            for(int indexOuter= 0; indexOuter < policeRowsCount; indexOuter++)
+            {
+                DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel1 =
+                        (DispatchCoverageFieldsPanel) policeStationsPanel
+                                .getComponent(indexOuter);
+                DispatchStationModel model1 = policeStationList.get(indexOuter);
+                for(int indexInner = indexOuter + 1; indexInner < policeRowsCount; indexInner++)
+                {
+                    DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel2 =
+                            (DispatchCoverageFieldsPanel) policeStationsPanel
+                                    .getComponent(indexInner);
+                    DispatchStationModel model2 = policeStationList.get(indexInner);
+                    if(model1.getStation_id() == model2.getStation_id())
+                    {
+                        theresDuplicateCoverageRows = true;
+                        aDispatchCoverageFieldsPanel1.setAllEditableFieldsRed(true);
+                        aDispatchCoverageFieldsPanel2.setAllEditableFieldsRed(true);
+                    }
+                }
+            }
+        }
+
+        int fireRowsCount = fireStationList.size();
+        if(fireRowsCount >= 2)
+        {
+            for(int indexOuter= 0; indexOuter < fireRowsCount; indexOuter++)
+            {
+                DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel1 =
+                        (DispatchCoverageFieldsPanel) fireStationsPanel
+                                .getComponent(indexOuter);
+                DispatchStationModel model1 = fireStationList.get(indexOuter);
+                for(int indexInner = indexOuter + 1; indexInner < fireRowsCount; indexInner++)
+                {
+                    DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel2 =
+                            (DispatchCoverageFieldsPanel) policeStationsPanel
+                                    .getComponent(indexInner);
+                    DispatchStationModel model2 = fireStationList.get(indexInner);
+                    if(model1.getStation_id() == model2.getStation_id())
+                    {
+                        theresDuplicateCoverageRows = true;
+                        aDispatchCoverageFieldsPanel1.setAllEditableFieldsRed(true);
+                        aDispatchCoverageFieldsPanel2.setAllEditableFieldsRed(true);
+                    }
+                }
+            }
+        }
+
+        int emtRowsCount = emtStationList.size();
+        if(emtRowsCount >= 2)
+        {
+            for(int indexOuter= 0; indexOuter < emtRowsCount; indexOuter++)
+            {
+                DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel1 =
+                        (DispatchCoverageFieldsPanel) emtStationsPanel
+                                .getComponent(indexOuter);
+                DispatchStationModel model1 = emtStationList.get(indexOuter);
+                for(int indexInner = indexOuter + 1; indexInner < emtRowsCount; indexInner++)
+                {
+                    DispatchCoverageFieldsPanel aDispatchCoverageFieldsPanel2 =
+                            (DispatchCoverageFieldsPanel) emtStationsPanel
+                                    .getComponent(indexInner);
+                    DispatchStationModel model2 = emtStationList.get(indexInner);
+                    if(model1.getStation_id() == model2.getStation_id())
+                    {
+                        theresDuplicateCoverageRows = true;
+                        aDispatchCoverageFieldsPanel1.setAllEditableFieldsRed(true);
+                        aDispatchCoverageFieldsPanel2.setAllEditableFieldsRed(true);
+                    }
+                }
+            }
+        }
+
+        return theresDuplicateCoverageRows;
+    }
+
+    private void unRedAllCoverageRowsFields() {
+        for (int index = 0; index < policeStationsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel policeDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) policeStationsPanel
+                            .getComponent(index);
+            policeDispatchCoverageFieldsPanel.setAllEditableFieldsRed(false);
+        }
+        for (int index = 0; index < fireStationsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel fireDispatchCoverageFieldsPanel =
+                    (DispatchCoverageFieldsPanel) fireStationsPanel
+                            .getComponent(index);
+            fireDispatchCoverageFieldsPanel.setAllEditableFieldsRed(false);
+        }
+        for (int index = 0; index < emtStationsPanel.getComponentCount(); index++) {
+            DispatchCoverageFieldsPanel emtDispatchCoverageFieldsPane =
+                    (DispatchCoverageFieldsPanel) emtStationsPanel
+                            .getComponent(index);
+            emtDispatchCoverageFieldsPane.setAllEditableFieldsRed(false);
+        }
     }
 }
