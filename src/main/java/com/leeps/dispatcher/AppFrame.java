@@ -55,7 +55,7 @@ public class AppFrame extends JFrame {
     private BufferedImage appIcon1BufferedImage;
     private BufferedImage appIcon2BufferedImage;
     private ImageIcon connectedImageIcon;
-    private ImageIcon offlinedImageIcon;
+    private ImageIcon disconnectedImageIcon;
     private enum WhichAppIcon {
         APP_ICON_1, APP_ICON_2
     }
@@ -219,13 +219,24 @@ public class AppFrame extends JFrame {
         preferredAppLocationAndSize = appWideCallsService.positionAndSize27inchWideMonitor();
         setBounds(preferredAppLocationAndSize);
     }
+
+    private void changeConnectionState(boolean flag) {
+        if(flag) {
+            lblConnection.setText(AppWideStrings.socketConnectionString);
+            lblConnectionImage.setIcon(connectedImageIcon);
+        }
+        else {
+            lblConnection.setText(AppWideStrings.socketDisconnectionString);
+            lblConnectionImage.setIcon(disconnectedImageIcon);
+        }
+    }
     // UI Effect Service Functions
     private void initCustomizedUiWidgetsFactory() {
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();
         genericUserImageIcon = customizedUiWidgetsFactory.makeImageIcon(
                 AppWideStrings.icon_generic_user_green);
         connectedImageIcon = new ImageIcon(getClass().getResource(AppWideStrings.connectedImage));
-        offlinedImageIcon = new ImageIcon(getClass().getResource(AppWideStrings.offlineImage));
+        disconnectedImageIcon = new ImageIcon(getClass().getResource(AppWideStrings.offlineImage));
     }
 
     private void applyMenuEffect(final JMenu pJMenu) {
@@ -555,8 +566,7 @@ public class AppFrame extends JFrame {
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-//                setWebSocketHandshakeSuccess(true);
-//                showServerConnectionUpPanel();
+                changeConnectionState(true);
                 loadAddressData();
                 System.out.println(appWideCallsService.getCurrentTime() + " --- " + "Connected");
             }
@@ -587,7 +597,7 @@ public class AppFrame extends JFrame {
         }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                System.out.println(appWideCallsService.getCurrentTime() + " --- " + "Disconnected");
+                changeConnectionState(false);
             }
         });
 
