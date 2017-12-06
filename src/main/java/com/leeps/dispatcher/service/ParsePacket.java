@@ -47,9 +47,9 @@ public class ParsePacket {
                     case get_dispatch_station_list:
                         getDispatchStationList(jsonObject);
                         break;
-//                    case need_assistance:
-//                        needAssistance(jsonObject);
-//                        break;
+                    case need_assistance:
+                        needAssistance(jsonObject);
+                        break;
 //                    case officer_handle_success:
 //                        handleOfficerSuccess(jsonObject);
 //                        break;
@@ -180,5 +180,16 @@ public class ParsePacket {
             e.printStackTrace();
         }
         appFrame.setDispatchStationList(mapDispatchStation);
+    }
+
+    private void needAssistance(JSONObject jsonObject)
+    {
+        JSONObject object = new JSONObject();
+        try {
+            object = jsonObject.getJSONObject("officer");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        appFrame.addWaitingOfficer(object);
     }
 }

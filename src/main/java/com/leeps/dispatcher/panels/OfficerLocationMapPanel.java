@@ -120,7 +120,6 @@ public class OfficerLocationMapPanel extends JPanel {
         col1Panel = new JPanel(new GridLayout(0, 1));
         col1Panel.setBackground(AppWideStrings.primaryColor);
         col1Panel.setOpaque(true);
-        col1Panel.setBorder(BorderFactory.createEtchedBorder(1, Color.RED, Color.MAGENTA));
         final JFXPanel fxPanel = new JFXPanel();
         Platform.runLater(new Runnable() {
             @Override
@@ -129,7 +128,6 @@ public class OfficerLocationMapPanel extends JPanel {
             }
         });
         col1Panel.add(fxPanel, BorderLayout.CENTER);
-
     }
 
     private void buildRow2Panel() {

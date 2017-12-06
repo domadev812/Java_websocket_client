@@ -1,5 +1,7 @@
 package com.leeps.dispatcher.common;
 
+import info.monitorenter.util.Range;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -117,4 +119,68 @@ public interface AppWideStrings {
     // Officer Location Map
     public String mapGotoImage = "../../../../map-goto.png";
     public String mapLocationImage = "../../../../map-location.png";
+
+    //Pending Dialog
+    public String alarmsPendingDialogNoAlarmsString = "Currently no alarms";
+    public String youAreOnlyAllowedToHandleTheFirstOfficerString =
+            "You are only allowed to handle the first officer.";
+    public String alarmsAreTakenInOrderString =
+            "<html><strong>Important:</strong> Alarms are taken in order.</html>";
+    public String buttonTextCloseString = "Close";
+    public String handleOfficerButtonStirng = "Handle";
+
+    // Chart Panel
+
+    public Range liveDataGraphOutsideTempAtRestAverageRange = new Range(65.0, 85.0);
+    public Color liveDataGraphOutsideTempLineColor = new Color(165, 42, 42); // brown
+
+    public String liveDataAllGraphLinesCardLayoutKey = "liveDataAllGraphLinesPanel";
+    public String liveDataGraphHeartRateCardLayoutKey = "liveDataGraphHeartRatePanel";
+    public String liveDataGraphMotionCardLayoutKey = "liveDataGraphMotionPanel";
+    public String liveDataGraphPerspirationCardLayoutKey = "liveDataGraphPerspirationPanel";
+    public String liveDataGraphSkinTempCardLayoutKey = "liveDataGraphSkinTempPanel";
+
+    public String liveDataGraphBiometricsString = "BIOMETRICS";
+    public String liveDataGraphTitleString = " GRAPH";
+    public String liveDataMinutesString = "Minutes";
+
+    public String liveDataAllGraphLinesString = "ALL GRAPH LINES";
+    public String liveDataAllGraphLinesTitleString = "  All Graph Lines  ";
+    public String liveDataGraphHeartRateString = "HEART RATE";
+    public String liveDataGraphHeartRateTitleString = "  Heart Rate Graph  ";
+    public String liveDataGraphHeartRateBpmString = " bpm)";
+    public String liveDataGraphHeartRateBpmAxisString = "(bpm)";
+    public String liveDataGraphHeartRateRangeString = "Range 0 to 240";
+    public String liveDataGraphHeartRateHoverHelpString = "As measured from wrist sensor";
+    public Range liveDataGraphHeartRateRange = new Range(0.0, 240.0);
+    public Range liveDataGraphHeartRateAtRestAverageRange = new Range(66.0, 81.0);
+
+    public String liveDataGraphMotionString = "MOTION";
+    public String liveDataGraphMotionTitleString = "  Motion Graph  ";
+    public String liveDataGraphMotionMs2String = " m / s\u00B2)";
+    public String liveDataGraphMotionMs2AxisString = "(m / s\u00B2)";
+    public String liveDataGraphMotionRangeString = "Range 0 to 3.7";
+    public String liveDataGraphMotionHoverHelpString = "Meters per second squared";
+    public Range liveDataGraphMotionRange = new Range(0.0, 3.7);
+    public Range liveDataGraphMotionAtRestAverageRange = new Range(0.02, 0.06);
+
+    public String liveDataGraphPerspirationString = "PERSPIRATION";
+    public String liveDataGraphPerspirationTitleString = "  Perspiration Graph  ";
+    public String liveDataGraphPerspirationcm2String = " cm\u00B2)";
+    public String liveDataGraphPerspirationcm2AxisString = "(cm\u00B2)";
+    public String liveDataGraphPerspirationRangeString = "Range 200 to 600";
+    public String liveDataGraphPerspHoverHelpString = "Galvanic Skin Response Sensors";
+    public Range liveDataGraphPerspirationRange = new Range(200.0, 600.0);
+    public Range liveDataGraphPerspirationAtRestAverageRange = new Range(210, 260);
+
+    public String liveDataGraphSkinOutsideTempString = "SKIN/OUTSIDE TEMP";
+    public String liveDataGraphSkinTempString = "SKIN TEMP";
+    public String liveDataGraphOutsideTempString = "OUTSIDE TEMP";
+    public String liveDataGraphSkinTempTitleString = "  Skin/Outside Temperature Graph  ";
+    public String liveDataGraphSkinTempFString = " F)";
+    public String liveDataGraphSkinTempFAxisString = "(F)";
+    public String liveDataGraphSkinTempRangeString = "Range -32 to 120";
+    public String liveDataGraphSkinTempHoverHelpString = "As measured from wrist sensor";
+    public Range liveDataGraphSkinTempRange = new Range(-32.0, 120.0);
+    public Range liveDataGraphSkipTempAtRestAverageRange = new Range(91.0, 93.0);
 }

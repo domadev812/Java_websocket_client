@@ -58,4 +58,7 @@ public interface KeyStrings {
     String keyContactRelation = "contact_relation";
     String keyWeight = "weight";
     String keyBadgeNumber = "badge_number";
+    String keyLatitude = "lat";
+    String keyLongitude = "lon";
+    String keyOfficerHandle = "officer_handle";
 }

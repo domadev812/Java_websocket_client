@@ -59,6 +59,7 @@ public class AppFrame extends JFrame {
     private enum WhichAppIcon {
         APP_ICON_1, APP_ICON_2
     }
+    private Thread iconBlinkThread;
 
     //Menu Component
     private JMenuBar appMenuBar;
@@ -67,10 +68,11 @@ public class AppFrame extends JFrame {
     private JMenu helpMenu;
     private MaterialButton alarmsPendingButton;
     private BaseMenuItem currentMenuItem = null;
+
     //UI Component
     private LoginDialog loginDialog;
     private DispatcherProfileDialog dispatcherProfileDialog = null;
-
+    private AlarmsPendingDialog alarmsPendingDialog = null;
     private JPanel contentPanel;
     private JPanel centerPanel;
     private JPanel bottomPanel;
@@ -81,16 +83,19 @@ public class AppFrame extends JFrame {
 
     private Rectangle preferredAppLocationAndSize;
 
-    private ArrayList<StateModel> listState = new ArrayList<StateModel>();
-    private ArrayList<CityModel> listCity = new ArrayList<CityModel>();
-    private ArrayList<StationModel> listStation = new ArrayList<StationModel>();
-    private ArrayList<DispatchStationModel> listDispatcherStation = new ArrayList<DispatchStationModel>();
-
     private OfficerStatusGraphPanel officerStatusGraphPanel;
     private OfficerLocationMapPanel officerLocationMapPanel;
     private OfficerProfilePanel officerProfilePanel;
     private JSplitPane hasLeftAndRightPanelsJSplitPane;
     private JSplitPane hasTopAndBottomPanelsJSplitPane;
+
+    private ArrayList<StateModel> listState = new ArrayList<StateModel>();
+    private ArrayList<CityModel> listCity = new ArrayList<CityModel>();
+    private ArrayList<StationModel> listStation = new ArrayList<StationModel>();
+    private ArrayList<DispatchStationModel> listDispatcherStation = new ArrayList<DispatchStationModel>();
+
+    private ArrayList<JSONObject> waitingOfficerList = new ArrayList<JSONObject>();
+    int howManyAlarmsPending = 0;
 
     //Socket Variables
     private Socket socket;
@@ -117,15 +122,13 @@ public class AppFrame extends JFrame {
         });
         threadConnection.start();
 
-        loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
-        loginDialog.setVisible(true);
 
         isHandled = false;
         initCustomizedUiWidgetsFactory();
         initProperties();
         layoutUI();
-
-        setContentPane(contentPanel);
+        alarmsPendingDialog = new AlarmsPendingDialog(this, 640, 250, customizedUiWidgetsFactory, appWideCallsService);
+        setContentPane(contentPanel);;
 //        addWindowListener(new FrameWindowListener());
 //        addComponentListener(new FrameResizedListener());
 
@@ -134,7 +137,26 @@ public class AppFrame extends JFrame {
         makeAppPreferredAppLocationAndSize();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
+        initPendingData();
+        loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
+        loginDialog.setVisible(true);
         setVisible(true);
+    }
+
+    private void initPendingData() {
+        for(int i = 0; i < 3; i++) {
+            JSONObject jsonObject1 = new JSONObject();
+            try {
+                jsonObject1.put(KeyStrings.keyFirstName, "First" + i);
+                jsonObject1.put(KeyStrings.keyLastName, "Last1" + i);
+                jsonObject1.put(KeyStrings.keyBadgeNumber, "Badge" + i);
+                jsonObject1.put(KeyStrings.keyLatitude, 123.4567);
+                jsonObject1.put(KeyStrings.keyLongitude, 38.9865);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            addWaitingOfficer(jsonObject1);
+        }
     }
 
     //Data Manage Functions
@@ -155,6 +177,11 @@ public class AppFrame extends JFrame {
 
     public void setHandledOfficer(JSONObject jsonObject){this.handledOfficer = jsonObject;}
     public JSONObject getHandledOfficer() {return this.handledOfficer;}
+
+    public void addWaitingOfficer(JSONObject jsonObject) {
+        waitingOfficerList.add(jsonObject);
+        updateHowManyAlarmsPending();
+    }
 
     public void setHandled(boolean isHandled) {this.isHandled = isHandled;}
     public boolean isHandled() {return this.isHandled;}
@@ -230,6 +257,63 @@ public class AppFrame extends JFrame {
             lblConnectionImage.setIcon(disconnectedImageIcon);
         }
     }
+
+    private void updateHowManyAlarmsPending() {
+        howManyAlarmsPending = waitingOfficerList.size();
+        alarmsPendingButton.setText(AppWideStrings.alarmPendingButtonString + howManyAlarmsPending);
+
+        if (howManyAlarmsPending == 0) {
+            alarmsPendingButton.setConfiguration(new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x4F, 0x4F, 0x4F));
+            blinkAppIcon(false);
+        } else {
+            alarmsPendingButton.setConfiguration(new Color(0xEC, 0x19, 0x19), Color.WHITE, new Color(0xDB, 0x05, 0x05));
+            if (iconBlinkThread == null) {
+                blinkAppIcon(true);
+            }
+        }
+
+        alarmsPendingDialog.replaceRowsNameListPanel(waitingOfficerList);
+    }
+    public void blinkAppIcon(boolean pShouldBlink) {
+        if (!pShouldBlink) {
+            if (iconBlinkThread != null) {
+                iconBlinkThread.interrupt();
+                iconBlinkThread = null;
+            }
+
+            setState(Frame.NORMAL);
+            setTheAppIcon(WhichAppIcon.APP_ICON_1);
+            toFront();
+//            appWideCallsService.stopAppIconBlinkingSound();
+
+        } else {
+            iconBlinkThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if ((iconBlinkThread != null) && iconBlinkThread.isAlive()
+                                && !(iconBlinkThread.isInterrupted())) {
+                            try {
+                                setTheAppIcon(WhichAppIcon.APP_ICON_2);
+//                                appWideCallsService.playAppIconBlinkingSound();
+                                Thread.sleep(500);
+
+                                setTheAppIcon(WhichAppIcon.APP_ICON_1);
+                                Thread.sleep(500);
+                            } catch (InterruptedException ex) {
+                            }
+                        } else {
+                            // User clicks blinking icon when minimized
+                            blinkAppIcon(false);
+                            break;
+                        }
+                    }
+                }
+            });
+            iconBlinkThread.start();
+        }
+    }
+
     // UI Effect Service Functions
     private void initCustomizedUiWidgetsFactory() {
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();
@@ -326,22 +410,19 @@ public class AppFrame extends JFrame {
         helpMenu.add(itemPrivacy);
         helpMenu.add(itemTerms);
         helpMenu.add(itemFaq);
-//        customizedUiWidgetsFactory.removeAllMouseListeners(dispatcherProfileMenu);
-//        customizedUiWidgetsFactory.removeAllMouseListeners(windowMenu);
-//        customizedUiWidgetsFactory.removeAllMouseListeners(helpMenu);
-//
+
         applyMenuEffect(dispatcherProfileMenu);
         applyMenuEffect(windowMenu);
         applyMenuEffect(helpMenu);
 
         handPointingCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
-        alarmsPendingButton = new MaterialButton(AppWideStrings.alarmPendingButtonString + 0, new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x56, 0x56, 0x56));
+        alarmsPendingButton = new MaterialButton(AppWideStrings.alarmPendingButtonString + howManyAlarmsPending, new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x4F, 0x4F, 0x4F));
         alarmsPendingButton.setFont(common.getRobotoBoldFont(14.0f));
         alarmsPendingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
-//                alarmsPendingDialog.setVisible(true);
+                alarmsPendingDialog.setVisible(true);
             }
         });
 
