@@ -2,6 +2,7 @@ package com.leeps.dispatcher.panels;
 
 import com.leeps.dispatcher.common.*;
 import com.leeps.dispatcher.service.*;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import info.monitorenter.gui.chart.Chart2D;
 import info.monitorenter.gui.chart.ITrace2D;
 import info.monitorenter.gui.chart.axis.AAxis;
@@ -97,7 +98,8 @@ public class OfficerStatusGraphPanel extends JPanel {
         currentOfficerBioLinksAndStatusGraphPanel.setBackground(AppWideStrings.panelBackgroundColor);
         currentOfficerBioLinksAndStatusGraphPanel.setOpaque(true);
         add(currentOfficerBioLinksAndStatusGraphPanel);
-        setBackground(Color.WHITE);
+        setBackground(AppWideStrings.panelBackgroundColor);
+        setOpaque(true);
     }
 
     private void buildBiometricsClickLinksPanel() {
@@ -110,7 +112,7 @@ public class OfficerStatusGraphPanel extends JPanel {
         allGraphLinesClickLink = customizedUiWidgetsFactory.makeClickableTextLink(
                 AppWideStrings.liveDataAllGraphLinesString, Color.BLUE,
                 AppWideStrings.panelBackgroundColor);
-
+        allGraphLinesClickLink.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         allGraphLinesClickLink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -127,7 +129,7 @@ public class OfficerStatusGraphPanel extends JPanel {
         heartRateClickLink = customizedUiWidgetsFactory.makeClickableTextLink(
                 AppWideStrings.liveDataGraphHeartRateString, Color.BLUE,
                 AppWideStrings.panelBackgroundColor);
-
+        heartRateClickLink.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         heartRateClickLink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -152,7 +154,7 @@ public class OfficerStatusGraphPanel extends JPanel {
         motionClickLink = customizedUiWidgetsFactory.makeClickableTextLink(
                 AppWideStrings.liveDataGraphMotionString, Color.BLUE,
                 AppWideStrings.panelBackgroundColor);
-
+        motionClickLink.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         motionClickLink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -177,7 +179,7 @@ public class OfficerStatusGraphPanel extends JPanel {
         perspirationClickLink = customizedUiWidgetsFactory.makeClickableTextLink(
                 AppWideStrings.liveDataGraphPerspirationString, Color.BLUE,
                 AppWideStrings.panelBackgroundColor);
-
+        perspirationClickLink.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         perspirationClickLink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -202,7 +204,7 @@ public class OfficerStatusGraphPanel extends JPanel {
         skinTempClickLink = customizedUiWidgetsFactory.makeClickableTextLink(
                 AppWideStrings.liveDataGraphSkinOutsideTempString, Color.BLUE,
                 AppWideStrings.panelBackgroundColor);
-
+        skinTempClickLink.setFont(Roboto.MEDIUM.deriveFont(12.0f));
         skinTempClickLink.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -231,29 +233,33 @@ public class OfficerStatusGraphPanel extends JPanel {
         double[][] biometricsLayoutSpec = new double[][] { {
                 TableLayout.PREFERRED
         }, {
+                30,
                 TableLayout.PREFERRED,
-                0.10,
-                0.80,
+                0.07,
+                0.83,
                 0.10
         } };
 
         biometricsClickLinksTopBottomPanel = new JPanel(new TableLayout(biometricsLayoutSpec));
+        biometricsClickLinksTopBottomPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        biometricsClickLinksTopBottomPanel.setOpaque(true);
+
         //biometricsClickLinksTopBottomPanel.setPreferredSize(new Dimension(250, 20));
         biometricsClickLinksTopBottomPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(19, 7,
-                        7, 7),
-                BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)));
+                BorderFactory.createEmptyBorder(19, 15,
+                        7, 10),
+                BorderFactory.createEtchedBorder(EtchedBorder.RAISED)));
 
         JPanel biometricLabelPanel = customizedUiWidgetsFactory.applyFontSizeAlignBgColorToLabel(
-                14.0f, new JLabel(AppWideStrings.liveDataGraphBiometricsString), SwingConstants.CENTER,
+                16.0f, new JLabel(AppWideStrings.liveDataGraphBiometricsString), SwingConstants.CENTER,
                 AppWideStrings.panelBackgroundColor);
         biometricLabelPanel.setBackground(AppWideStrings.panelBackgroundColor);
-        biometricsClickLinksTopBottomPanel.add(biometricLabelPanel, "0,0");
+        biometricsClickLinksTopBottomPanel.add(biometricLabelPanel, "0,1");
         biometricsClickLinksTopBottomPanel.add(customizedUiWidgetsFactory.makeIndentedJPanel(
-                0, null), "0,1");
-        biometricsClickLinksTopBottomPanel.add(biometricsClickLinksPanel, "0,2");
+                0, null), "0,2");
+        biometricsClickLinksTopBottomPanel.add(biometricsClickLinksPanel, "0,3");
         biometricsClickLinksTopBottomPanel.add(customizedUiWidgetsFactory.makeIndentedJPanel(
-                0, null), "0,3");
+                0, null), "0,4");
     }
 
     private void buildCurrentOfficerStatusGraphPanel() {
@@ -261,6 +267,8 @@ public class OfficerStatusGraphPanel extends JPanel {
         liveDataGraphBiometricsPanel = new JPanel(liveDataGraphBiometricsCardLayout);
         liveDataGraphBiometricsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0,
                 7, 7));
+        liveDataGraphBiometricsPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        liveDataGraphBiometricsPanel.setOpaque(true);
 
         liveDataAllGraphLinesPanel = new JPanel(new BorderLayout());
         liveDataGraphHeartRatePanel = new JPanel(new BorderLayout());
@@ -268,35 +276,78 @@ public class OfficerStatusGraphPanel extends JPanel {
         liveDataGraphPerspirationPanel = new JPanel(new BorderLayout());
         liveDataGraphSkinTempPanel = new JPanel(new BorderLayout());
 
-        liveDataAllGraphLinesPanel.add(
-                customizedUiWidgetsFactory.applyFontSizeAlignBgColorToLabel(14.0f,
-                        new JLabel(AppWideStrings.liveDataAllGraphLinesTitleString),
-                        SwingConstants.CENTER, null),
-                BorderLayout.NORTH);
 
-        liveDataGraphHeartRatePanel.add(
-                customizedUiWidgetsFactory.applyFontSizeAlignBgColorToLabel(14.0f,
-                        new JLabel(AppWideStrings.liveDataGraphHeartRateTitleString),
-                        SwingConstants.CENTER, null),
-                BorderLayout.NORTH);
+        double graphTitleLayout[][] = new double[][] { {
+                TableLayout.FILL
+        }, {
+                10,
+                TableLayout.PREFERRED,
+                5
+        } };
+        JPanel allGraphPanelTitle = new JPanel(new TableLayout(graphTitleLayout));
+        allGraphPanelTitle.setOpaque(false);
+        JLabel allGraphTitle = new JLabel(AppWideStrings.liveDataAllGraphLinesTitleString.toUpperCase());
+        allGraphTitle.setFont(Roboto.BOLD.deriveFont(16.0f));
+        allGraphTitle.setForeground(AppWideStrings.primaryColor);
+        allGraphPanelTitle.add(allGraphTitle, "0, 1");
+        allGraphTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
-        liveDataGraphMotionPanel.add(
-                customizedUiWidgetsFactory.applyFontSizeAlignBgColorToLabel(14.0f,
-                        new JLabel(AppWideStrings.liveDataGraphMotionTitleString),
-                        SwingConstants.CENTER, null),
+        liveDataAllGraphLinesPanel.add(allGraphPanelTitle,
                 BorderLayout.NORTH);
+        liveDataAllGraphLinesPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        liveDataAllGraphLinesPanel.setOpaque(true);
 
-        liveDataGraphPerspirationPanel.add(
-                customizedUiWidgetsFactory.applyFontSizeAlignBgColorToLabel(14.0f,
-                        new JLabel(AppWideStrings.liveDataGraphPerspirationTitleString),
-                        SwingConstants.CENTER, null),
-                BorderLayout.NORTH);
+        JPanel heartGraphPanelTitle = new JPanel(new TableLayout(graphTitleLayout));
+        heartGraphPanelTitle.setOpaque(false);
+        JLabel heartGraphTitle = new JLabel(AppWideStrings.liveDataGraphHeartRateTitleString.toUpperCase());
+        heartGraphTitle.setFont(Roboto.BOLD.deriveFont(16.0f));
+        heartGraphTitle.setForeground(AppWideStrings.primaryColor);
+        heartGraphPanelTitle.add(heartGraphTitle, "0, 1");
+        heartGraphTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
-        liveDataGraphSkinTempPanel.add(
-                customizedUiWidgetsFactory.applyFontSizeAlignBgColorToLabel(14.0f,
-                        new JLabel(AppWideStrings.liveDataGraphSkinTempTitleString),
-                        SwingConstants.CENTER, null),
+        liveDataGraphHeartRatePanel.add(heartGraphPanelTitle,
                 BorderLayout.NORTH);
+        liveDataGraphHeartRatePanel.setBackground(AppWideStrings.panelBackgroundColor);
+        liveDataGraphHeartRatePanel.setOpaque(true);
+
+        JPanel motionGraphPanelTitle = new JPanel(new TableLayout(graphTitleLayout));
+        motionGraphPanelTitle.setOpaque(false);
+        JLabel motionGraphTitle = new JLabel(AppWideStrings.liveDataGraphMotionTitleString.toUpperCase());
+        motionGraphTitle.setFont(Roboto.BOLD.deriveFont(16.0f));
+        motionGraphTitle.setForeground(AppWideStrings.primaryColor);
+        motionGraphPanelTitle.add(motionGraphTitle, "0, 1");
+        motionGraphTitle.setHorizontalAlignment(SwingConstants.CENTER);
+
+        liveDataGraphMotionPanel.add(motionGraphPanelTitle,
+                BorderLayout.NORTH);
+        liveDataGraphMotionPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        liveDataGraphMotionPanel.setOpaque(true);
+
+        JPanel perspirationGraphPanelTitle = new JPanel(new TableLayout(graphTitleLayout));
+        perspirationGraphPanelTitle.setOpaque(false);
+        JLabel perspirationGraphTitle = new JLabel(AppWideStrings.liveDataGraphPerspirationTitleString.toUpperCase());
+        perspirationGraphTitle.setFont(Roboto.BOLD.deriveFont(16.0f));
+        perspirationGraphTitle.setForeground(AppWideStrings.primaryColor);
+        perspirationGraphPanelTitle.add(perspirationGraphTitle, "0, 1");
+        perspirationGraphTitle.setHorizontalAlignment(SwingConstants.CENTER);
+
+        liveDataGraphPerspirationPanel.add(perspirationGraphPanelTitle,
+                BorderLayout.NORTH);
+        liveDataGraphPerspirationPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        liveDataGraphPerspirationPanel.setOpaque(true);
+
+        JPanel tempGraphPanelTitle = new JPanel(new TableLayout(graphTitleLayout));
+        tempGraphPanelTitle.setOpaque(false);
+        JLabel tempGraphTitle = new JLabel(AppWideStrings.liveDataGraphSkinTempTitleString.toUpperCase());
+        tempGraphTitle.setFont(Roboto.BOLD.deriveFont(16.0f));
+        tempGraphTitle.setForeground(AppWideStrings.primaryColor);
+        tempGraphPanelTitle.add(tempGraphTitle, "0, 1");
+        tempGraphTitle.setHorizontalAlignment(SwingConstants.CENTER);
+
+        liveDataGraphSkinTempPanel.add(tempGraphPanelTitle,
+                BorderLayout.NORTH);
+        liveDataGraphSkinTempPanel.setBackground(AppWideStrings.panelBackgroundColor);
+        liveDataGraphSkinTempPanel.setOpaque(true);
 
         initCharts();
 

@@ -4,6 +4,7 @@
 package com.leeps.dispatcher.service;
 
 import com.leeps.dispatcher.common.AppWideStrings;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import layout.TableLayout;
 
 import javax.imageio.ImageIO;
@@ -130,7 +131,7 @@ public class CustomizedUiWidgetsFactory {
             returnPanel.add(pJComponent);
         }
         returnPanel.setBorder(BorderFactory.createEmptyBorder());
-//        returnPanel.setBackground(AppWideStrings.innerPanelBackgroundColor);
+        returnPanel.setBackground(AppWideStrings.panelBackgroundColor);
         return returnPanel;
     }
 
@@ -142,7 +143,7 @@ public class CustomizedUiWidgetsFactory {
         }, {
                 TableLayout.FILL
         } };
-        pLabel.setFont(pLabel.getFont().deriveFont(pFontSize));
+        pLabel.setFont(Roboto.REGULAR.deriveFont(pFontSize));
         JPanel labelInPanel = new JPanel(new GridLayout(0, 1));
         labelInPanel.add(pLabel);
 
@@ -158,6 +159,7 @@ public class CustomizedUiWidgetsFactory {
         if (pBackgroundColor != null) {
             labelInPanel.setBackground(pBackgroundColor);
         }
+        returnPanel.setBackground(AppWideStrings.panelBackgroundColor);
         return returnPanel;
     }
 
