@@ -433,5 +433,6 @@ public class OfficerProfilePanel extends JPanel {
         officerContactRelationshipDataLabel.setText("");
 
         officerCurrentPoliceDepartmentDataLabel.setText("");
+        officerDepartmentPhoneDataLabel.setText("");
     }
 }

@@ -12,9 +12,10 @@ public interface KeyStrings {
 
     // Action Value
     String actionLogin = "login";
-
+    String keyReconnect = "reconnect";
     //JSON Key
     String keyErrorCode = "errorCode";
+
     String keyID = "id";
     String keyEmail = "user_email";
     String keyFirstName = "first_name";
@@ -61,4 +62,18 @@ public interface KeyStrings {
     String keyLatitude = "lat";
     String keyLongitude = "lon";
     String keyOfficerHandle = "officer_handle";
+    String keyOfficer = "officer";
+
+    String keyReportDelayTime = "report_delay_time";
+    String keyDelayTime = "delay_time";
+    String keyGoodAsk = "good_ask";
+    String keyAnswer = "answer";
+    public int delay_urgent_time = 10;
+    String keyCurrentOfficerHandled = "current_officer_handled";
+
+    public String keyHeartRate = "heartRate";
+    public String keyMotion = "motion";
+    public String keyPerspiration = "perspiration";
+    public String keyTemp = "temp";
+    public String keyReportTime = "reportTime";
 }

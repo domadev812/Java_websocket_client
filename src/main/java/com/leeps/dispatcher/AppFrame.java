@@ -42,6 +42,7 @@ public class AppFrame extends JFrame {
     JSONObject handledOfficer = null;
     boolean isHandled;
     double lat = 40.126936, lon = 124.394631;
+    int durationSeconds = 0;
 
     //Service and Constant Class Variable
     private AppWideCallsService appWideCallsService;
@@ -137,26 +138,9 @@ public class AppFrame extends JFrame {
         makeAppPreferredAppLocationAndSize();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        initPendingData();
         loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
         loginDialog.setVisible(true);
         setVisible(true);
-    }
-
-    private void initPendingData() {
-        for(int i = 0; i < 3; i++) {
-            JSONObject jsonObject1 = new JSONObject();
-            try {
-                jsonObject1.put(KeyStrings.keyFirstName, "First" + i);
-                jsonObject1.put(KeyStrings.keyLastName, "Last1" + i);
-                jsonObject1.put(KeyStrings.keyBadgeNumber, "Badge" + i);
-                jsonObject1.put(KeyStrings.keyLatitude, 123.4567);
-                jsonObject1.put(KeyStrings.keyLongitude, 38.9865);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            addWaitingOfficer(jsonObject1);
-        }
     }
 
     //Data Manage Functions
@@ -183,6 +167,26 @@ public class AppFrame extends JFrame {
         updateHowManyAlarmsPending();
     }
 
+    public void removeWaitingOfficer(JSONObject jsonObject)
+    {
+        final Object lock = new Object();
+        for(int i = 0; i < waitingOfficerList.size(); i++)
+        {
+            JSONObject object = waitingOfficerList.get(i);
+            try {
+                if(object.getInt(KeyStrings.keyOfficerID) == jsonObject.getInt(KeyStrings.keyOfficerID))
+                {
+                    synchronized (lock) {
+                        waitingOfficerList.remove(i);
+                    }
+                    break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        updateHowManyAlarmsPending();
+    }
     public void setHandled(boolean isHandled) {this.isHandled = isHandled;}
     public boolean isHandled() {return this.isHandled;}
 
@@ -422,7 +426,8 @@ public class AppFrame extends JFrame {
         alarmsPendingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
-                alarmsPendingDialog.setVisible(true);
+                if(howManyAlarmsPending > 0)
+                    alarmsPendingDialog.setVisible(true);
             }
         });
 
@@ -575,16 +580,17 @@ public class AppFrame extends JFrame {
         showHandledOfficer();
     }
     // UI Component Choose Functions
-    private void showHandledOfficer() {
+    public void showHandledOfficer() {
         System.out.println("Show Officer Profile");
         ((CardLayout) (centerPanel.getLayout())).show(
                 centerPanel, AppWideStrings.centerOfficerPanelCardLayoutKey);
-        appWideCallsService.showOfficerProfileUiDataModel(handledOfficer);
-        showAssistanceMap();
     }
 
-    public void showAssistanceMap() {
-//        officerLocationMapPanel.uponShowPanelChooseXy();
+    public void showOfficerProfileUiDataModel(){
+        appWideCallsService.showOfficerProfileUiDataModel(handledOfficer);
+    }
+    public void showLocationMap(boolean flag /* true: initLocation, false: updateLocation */) {
+        appWideCallsService.showLocationMap(flag);
     }
     //Callback Process Functions
     public void logIn(int errorCode, JSONObject jsonObject)     //Login CallBack
@@ -606,6 +612,18 @@ public class AppFrame extends JFrame {
     public void sendToServer(JSONObject jsonObject) {
         System.out.println(appWideCallsService.getCurrentTime() + " --- " + "To Server => " + jsonObject +  "\n");
         socket.emit(KeyStrings.toServer, jsonObject);
+    }
+
+    public void ReconnectToServer(){
+        if(dispatcherID == 0) return;
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(KeyStrings.keyAction, KeyStrings.keyReconnect);
+            jsonObject.put(KeyStrings.keyDispatcherID, dispatcherID);
+            sendToServer(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadAddressData()
@@ -659,7 +677,7 @@ public class AppFrame extends JFrame {
         }).on(Socket.EVENT_RECONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-//                ReconnectToServer();
+                ReconnectToServer();
                 System.out.println(appWideCallsService.getCurrentTime() + " --- " + "Reconnected");
             }
         }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {

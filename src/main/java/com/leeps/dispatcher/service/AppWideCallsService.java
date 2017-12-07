@@ -73,6 +73,13 @@ public class AppWideCallsService {
         return preferredAppLocationAndSize;
     }
 
+    public void blinkAppIcon(boolean pShouldBlink) {
+        appFrame.blinkAppIcon(pShouldBlink);
+    }
+
+    public void showHandledOfficer() {
+        appFrame.showHandledOfficer();
+    }
     public ArrayList<StateModel> getStateList() {return appFrame.getStateList();}
 
     public ArrayList<CityModel> getCityList(int stateID) {
@@ -126,6 +133,8 @@ public class AppWideCallsService {
         appFrame.setDispatchStationList(list);
     }
 
+    public JSONObject getHandledOfficer(){return appFrame.getHandledOfficer();}
+    public void setHandledOfficer(JSONObject jsonObject) {appFrame.setHandledOfficer(jsonObject);}
     public void setOfficerProfilePanel(OfficerProfilePanel pOfficerProfilePanel) {
         officerProfilePanel = pOfficerProfilePanel;
     }
@@ -145,7 +154,9 @@ public class AppWideCallsService {
     public void showOfficerProfileUiDataModel(JSONObject handledOfficer) {
         officerProfilePanel.showOfficerProfileUiDataModel(handledOfficer);
     }
-
+    public void showLocationMap(boolean flag) {
+        officerLocationMapPanel.initLocation(flag);
+    }
     public boolean isHandled() {return appFrame.isHandled();}
     public void setHandled(boolean isHandled){appFrame.setHandled(isHandled);}
 
@@ -154,4 +165,15 @@ public class AppWideCallsService {
 
     public void setLon(double lon){appFrame.setLon(lon);}
     public double getLon(){return appFrame.getLon();}
+
+    public void removeWaitingOfficer(JSONObject jsonObject){
+        appFrame.removeWaitingOfficer(jsonObject);
+    }
+
+    public int getDispatcherID() {
+        return appFrame.getDispatcherID();
+    }
+
+    public void initGraphData(JSONObject jsonObject){
+    }
 }

@@ -143,7 +143,7 @@ public class AlarmsPendingDialog extends BaseDialog implements ActionListener {
                     JSONObject handledObject = alarmDataList.get(0);
                     appWideCallsService.setHandled(true);
                     alarmDataList.remove(0);
-//                    appWideCallsService.removeWaitingOfficer(handledObject);
+                    appWideCallsService.removeWaitingOfficer(handledObject);
                     try {
                         appWideCallsService.setLat(handledObject.getDouble(KeyStrings.keyLatitude));
                         appWideCallsService.setLon(handledObject.getDouble(KeyStrings.keyLongitude));
@@ -151,17 +151,17 @@ public class AlarmsPendingDialog extends BaseDialog implements ActionListener {
                         e.printStackTrace();
                     }
 
-//                    appWideCallsService.blinkAppIcon(false);
+                    appWideCallsService.blinkAppIcon(false);
                     try {
                         handledObject.put(KeyStrings.keyAction, KeyStrings.keyOfficerHandle);
-//                        handledObject.put(KeyStrings.keyDispatcherID, appWideCallsService.getDispatcherID());
+                        handledObject.put(KeyStrings.keyDispatcherID, appWideCallsService.getDispatcherID());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    appWideCallsService.sendToServer(handledObject);
+                    appWideCallsService.sendToServer(handledObject);
 //                    appWideCallsService.initOfficerGraph(true);
                     setVisible(false);
-//                    appWideCallsService.showMultiPanel();
+                    appWideCallsService.showHandledOfficer();
                 }
             });
 

@@ -7,7 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ParsePacket {
     AppFrame appFrame;
@@ -50,9 +54,9 @@ public class ParsePacket {
                     case need_assistance:
                         needAssistance(jsonObject);
                         break;
-//                    case officer_handle_success:
-//                        handleOfficerSuccess(jsonObject);
-//                        break;
+                    case officer_handle_success:
+                        handleOfficerSuccess(jsonObject);
+                        break;
 //                    case dispatcher_handled_officer:
 //                        anotherDispatcherHandledOfficer(jsonObject);
 //                        break;
@@ -62,9 +66,9 @@ public class ParsePacket {
 //                    case good_answer:
 //                        goodAnswer(jsonObject);
 //                        break;
-//                    case position_report:
-//                        refreshMarker(jsonObject);
-//                        break;
+                    case position_report:
+                        updatePosition(jsonObject);
+                        break;
 //                    case graph_data:
 //                        initGraphData(jsonObject);
 //                        break;
@@ -74,6 +78,40 @@ public class ParsePacket {
         ts.start();
     }
 
+    private void updatePosition(JSONObject jsonObject)
+    {
+        double lat = 0.0, lon = 0.0;
+        int officerID = 0;
+        String firstName ="", lastName ="";
+        try {
+            if(!appFrame.isHandled()) return;
+            officerID = jsonObject.getInt(KeyStrings.keyOfficerID);
+            lat = jsonObject.getDouble(KeyStrings.keyLatitude);
+            lon = jsonObject.getDouble(KeyStrings.keyLongitude);
+            JSONObject object = appFrame.getHandledOfficer();
+            if(object.getInt(KeyStrings.keyID) == officerID)
+            {
+                appFrame.setLon(lon);
+                appFrame.setLat(lat);
+                double heartRate = jsonObject.getDouble(KeyStrings.keyHeartRate);
+                double motion= jsonObject.getDouble(KeyStrings.keyMotion);
+                double perspiration = jsonObject.getDouble(KeyStrings.keyPerspiration);
+                double temp = jsonObject.getDouble(KeyStrings.keyTemp);
+                String reportTime = jsonObject.getString(KeyStrings.keyReportTime);
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date reportDate = null;
+                try {
+                    reportDate = format.parse(reportTime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                appFrame.showLocationMap(false);
+//                appFrame.addGraphData(reportDate.getTime(), heartRate, motion, perspiration, temp);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void logIn(JSONObject jsonObject) {
         int errorCode = 0;
         JSONObject responseObject = new JSONObject();
@@ -191,5 +229,32 @@ public class ParsePacket {
             e.printStackTrace();
         }
         appFrame.addWaitingOfficer(object);
+    }
+
+    private void handleOfficerSuccess(JSONObject jsonObject)
+    {
+        JSONObject officer = new JSONObject();
+        try {
+            officer = jsonObject.getJSONObject(KeyStrings.keyOfficer);
+            appFrame.setHandledOfficer(officer);
+            appFrame.setLat(jsonObject.getDouble(KeyStrings.keyLatitude));
+            appFrame.setLon(jsonObject.getDouble(KeyStrings.keyLongitude));
+            appFrame.setHandled(true);
+            JSONObject object = new JSONObject();
+            object.put(KeyStrings.keyAction, KeyStrings.keyGoodAsk);
+            object.put(KeyStrings.keyDispatcherID, appFrame.getDispatcherID());
+            object.put(KeyStrings.keyOfficerID, officer.getInt(KeyStrings.keyID));
+            appFrame.showOfficerProfileUiDataModel();
+            appFrame.showLocationMap(true);
+            appFrame.sendToServer(object);
+
+            JSONObject object1 = new JSONObject();
+            object1.put(KeyStrings.keyAction, KeyStrings.keyReportDelayTime);
+            object1.put(KeyStrings.keyDelayTime, KeyStrings.delay_urgent_time);
+            object1.put(KeyStrings.keyOfficerID, officer.getInt(KeyStrings.keyID));
+            appFrame.sendToServer(object1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

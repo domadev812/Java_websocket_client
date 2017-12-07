@@ -119,7 +119,9 @@ public interface AppWideStrings {
     // Officer Location Map
     public String mapGotoImage = "../../../../map-goto.png";
     public String mapLocationImage = "../../../../map-location.png";
-
+    public String googleMapsRequestCrossStreetsUrlString =
+            "https://maps.googleapis.com/maps/api/geocode/json?latlng=";
+    public String crossStreet = "CROSS STREETS:";
     //Pending Dialog
     public String alarmsPendingDialogNoAlarmsString = "Currently no alarms";
     public String youAreOnlyAllowedToHandleTheFirstOfficerString =

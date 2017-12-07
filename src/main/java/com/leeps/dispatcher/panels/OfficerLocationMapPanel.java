@@ -6,6 +6,7 @@ package com.leeps.dispatcher.panels;
 
 import com.leeps.dispatcher.common.*;
 import com.leeps.dispatcher.material.MaterialButton;
+import com.leeps.dispatcher.material.MultiLineLabel;
 import com.leeps.dispatcher.material.Roboto;
 import com.leeps.dispatcher.service.*;
 import de.craften.ui.swingmaterial.MaterialPanel;
@@ -21,8 +22,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import layout.TableLayout;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
+import javax.json.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -32,31 +36,32 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
 
 public class OfficerLocationMapPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private AppWideCallsService appWideCallsService;
     private CustomizedUiWidgetsFactory customizedUiWidgetsFactory;
+    private String developmentTimeMapsApiKey = "AIzaSyBm81MyX0kIFKNnATEWVt5VspajzdVMHYs";
 
     private JPanel col1Panel;
     private JPanel col2Panel;
-    private JLabel officerLocationData;
+    private JTextArea officerLocationData;
     private JLabel officerLocationGoto;
-    private JLabel officerCrossStreetData;
+    private JTextArea officerCrossStreetData;
     private JLabel officerGeoPointData;
     private JLabel officerGeoPointGoto;
     private JLabel officerGeoPointLocation;
     private MaterialButton handledButton;
-    private JLabel handledTime;
+    private JLabel officerHandledTime;
     private BufferedImage mapGotoImage;
     private BufferedImage mapLocationImage;
-
-    private String developmentTimeMapsApiKey = "AIzaSyBm81MyX0kIFKNnATEWVt5VspajzdVMHYs";
-    private BufferedImage currentOfficerGoogleMapsBufferedImage;
-    private Image currentOfficerGoogleMapsImage;
-
-    private int currentMapZoomHeightAboveEarth;
+    private float lat, lon;
     private Browser browser;
+
+    boolean threadFlag = false;
+    int durationSeconds = 0;
+
     public OfficerLocationMapPanel(AppWideCallsService pAppWideCallsService,
                                    CustomizedUiWidgetsFactory pCustomizedUiWidgetsFactory) {
         appWideCallsService = pAppWideCallsService;
@@ -78,6 +83,8 @@ public class OfficerLocationMapPanel extends JPanel {
         hasTwoRowsPanel.add(col1Panel, "0, 0");
         hasTwoRowsPanel.add(col2Panel, "1, 0");
         hasTwoRowsPanel.setBorder(BorderFactory.createEmptyBorder());
+
+        initLocationData();
         setOpaque(true);
         setBorder(BorderFactory.createEmptyBorder());
         setLayout(new GridLayout(0, 1));
@@ -115,8 +122,6 @@ public class OfficerLocationMapPanel extends JPanel {
         return (scene);
     }
     private void buildRow1Panel() {
-        currentMapZoomHeightAboveEarth = 16;
-
         col1Panel = new JPanel(new GridLayout(0, 1));
         col1Panel.setBackground(AppWideStrings.primaryColor);
         col1Panel.setOpaque(true);
@@ -143,7 +148,7 @@ public class OfficerLocationMapPanel extends JPanel {
                 25,
                 TableLayout.PREFERRED,      // Location Label
                 5,
-                50,      // Location Panel
+                TableLayout.PREFERRED,      // Location Panel
                 5,
                 TableLayout.PREFERRED,      // Cross Street
                 30,
@@ -169,21 +174,32 @@ public class OfficerLocationMapPanel extends JPanel {
 
         MaterialPanel locationPanel = new MaterialPanel();
         locationPanel.setLayout(new BorderLayout());
-        locationPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 30));
-        officerLocationData = new JLabel("LOCATION ADDRESS");
+        locationPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 30));
+        officerLocationData = new JTextArea("");
         officerLocationData.setFont(Roboto.BOLD.deriveFont(16.0f));
+        officerLocationData.setForeground(AppWideStrings.primaryColor);
+        officerLocationData.setLineWrap(true);
+        officerLocationData.setEditable(false);
+        officerLocationData.setBackground(AppWideStrings.whiteColor);
+        officerLocationData.setOpaque(true);
         officerLocationData.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
         officerLocationGoto = new JLabel();
         officerLocationGoto.setIcon(new ImageIcon(mapGotoImage));
 
         locationPanel.setBackground(Color.WHITE);
         locationPanel.setOpaque(true);
-        locationPanel.add(officerLocationGoto, BorderLayout.EAST);
+//        locationPanel.add(officerLocationGoto, BorderLayout.EAST);
         locationPanel.add(officerLocationData, BorderLayout.CENTER);
 
-        officerCrossStreetData = new JLabel("CROSS STREET");
+        officerCrossStreetData = new JTextArea(AppWideStrings.crossStreet);
         officerCrossStreetData.setFont(Roboto.REGULAR.deriveFont(14.0f));
         officerCrossStreetData.setForeground(AppWideStrings.primaryColor);
+        officerCrossStreetData.setLineWrap(true);
+        officerCrossStreetData.setEditable(false);
+        officerCrossStreetData.setBackground(AppWideStrings.panelBackgroundColor);
+        officerCrossStreetData.setOpaque(true);
+        officerCrossStreetData.setBorder(BorderFactory.createEmptyBorder());
 
         JLabel officerGeoPoint = new JLabel("GEOCODE POINT");
         officerGeoPoint.setFont(Roboto.REGULAR.deriveFont(14.0f));
@@ -191,37 +207,35 @@ public class OfficerLocationMapPanel extends JPanel {
 
         MaterialPanel geoPointPanel = new MaterialPanel();
         geoPointPanel.setLayout(new BorderLayout());
-        geoPointPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 30));
+        geoPointPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 30));
         geoPointPanel.setBackground(AppWideStrings.whiteColor);
         geoPointPanel.setOpaque(true);
-        officerGeoPointData = new JLabel("123.456, 456.7890");
+
+        officerGeoPointData = new JLabel("");
         officerGeoPointData.setFont(Roboto.BOLD.deriveFont(16.0f));
         officerGeoPointData.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
         officerGeoPointGoto = new JLabel();
         officerGeoPointGoto.setIcon(new ImageIcon(mapGotoImage));
         officerGeoPointLocation = new JLabel();
         officerGeoPointLocation.setIcon(new ImageIcon(mapLocationImage));
+
         geoPointPanel.add(officerGeoPointData, BorderLayout.CENTER);
         geoPointPanel.add(officerGeoPointLocation, BorderLayout.WEST);
-        geoPointPanel.add(officerGeoPointGoto, BorderLayout.EAST);
+//        geoPointPanel.add(officerGeoPointGoto, BorderLayout.EAST);
 
         handledButton = new MaterialButton("HANDLED", new Color(47, 128, 237), Color.WHITE, new Color(9, 90, 220));
         handledButton.setFont(Roboto.BOLD.deriveFont(20.0f));
         handledButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                       browser.gotoLocation(40.0978f, 124.354865f);
-                    }
-                });
+                handledOfficer();
             }
         });
-        handledTime = new JLabel("10:48");
-        handledTime.setFont(Roboto.BOLD.deriveFont(16.0f));
-        handledTime.setForeground(AppWideStrings.primaryColor);
-        handledTime.setHorizontalAlignment(SwingConstants.CENTER);
+        officerHandledTime = new JLabel("10:48");
+        officerHandledTime.setFont(Roboto.BOLD.deriveFont(16.0f));
+        officerHandledTime.setForeground(AppWideStrings.primaryColor);
+        officerHandledTime.setHorizontalAlignment(SwingConstants.CENTER);
 
         col2Panel.add(officerLocation, "1, 1, 3, 1");
         col2Panel.add(locationPanel, "1, 3, 3, 3");
@@ -229,9 +243,191 @@ public class OfficerLocationMapPanel extends JPanel {
         col2Panel.add(officerGeoPoint, "1, 7, 3, 7");
         col2Panel.add(geoPointPanel, "1, 9, 3, 9");
         col2Panel.add(handledButton, "2, 13");
-        col2Panel.add(handledTime, "1, 15, 3, 15");
+        col2Panel.add(officerHandledTime, "1, 15, 3, 15");
     }
 
+    private void handledOfficer() {
+        appWideCallsService.setHandled(false);
+        JSONObject handledOfficer = appWideCallsService.getHandledOfficer();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(KeyStrings.keyAction, KeyStrings.keyCurrentOfficerHandled);
+            jsonObject.put(KeyStrings.keyOfficerID, handledOfficer.getInt(KeyStrings.keyID));
+            appWideCallsService.sendToServer(jsonObject);
+            appWideCallsService.setHandledOfficer(null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        appWideCallsService.showOfficerProfileUiDataModel(null);
+        initLocationData();
+        appWideCallsService.initGraphData(null);
+    }
+
+    public void initLocationData(){
+        durationSeconds = 0;
+        threadFlag = false;
+        handledButton.setConfiguration(new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x4F, 0x4F, 0x4F));
+        handledButton.setEnabled(false);
+        officerCrossStreetData.setText(AppWideStrings.crossStreet);
+        officerLocationData.setText("");
+        officerGeoPointData.setText("");
+        officerHandledTime.setText("");
+    }
+
+    public void initLocation(boolean flag) {
+        lat = (float) appWideCallsService.getLat();
+        lon = (float) appWideCallsService.getLon();
+        if(flag) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    browser.gotoLocation(lat, lon);
+                }
+            });
+            handledButton.setConfiguration(new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
+            handledButton.setEnabled(true);
+            threadFlag = true;
+            TimerThread thread = new TimerThread();
+            thread.start();
+        }
+        reverseGeocodeCurrentOfficerLocFromXY(lat + ", " + lon);
+    }
+
+    public void showDurationTime() {
+        String durationTime = "";
+        int mins = durationSeconds / 60;
+        int secs = durationSeconds % 60;
+        if(mins < 10) durationTime += "0" + mins;
+        else durationTime += mins;
+        durationTime += ":";
+        if(secs < 10) durationTime += "0" + secs;
+        else durationTime += secs;
+
+        officerHandledTime.setText(durationTime);
+    }
+    private double truncateDoubleToNdecimalPlaces(
+            String pInputDoubleString, int pKeepNdecimalPlaces) {
+
+        double powerOf10 = Math.pow(10, pKeepNdecimalPlaces);
+        double originalDouble = Double.parseDouble(pInputDoubleString);
+        long turnIntoLong = Math.round(originalDouble * powerOf10);
+        double returnDouble = turnIntoLong / powerOf10;
+        return returnDouble;
+    }
+
+    private void reverseGeocodeCurrentOfficerLocFromXY(String pXAndYString) {
+        String mapThisGeoCodeString = null;
+        if(!appWideCallsService.isHandled()) return;
+        mapThisGeoCodeString = pXAndYString.trim().replaceAll(" ", "");
+
+        String[] xOrYGeoCodeStringArray = mapThisGeoCodeString.split(",");
+
+        double mapCenterX = 0;
+        double mapCenterY = 0;
+        mapCenterX = truncateDoubleToNdecimalPlaces(xOrYGeoCodeStringArray[0], 6);
+        mapCenterY = truncateDoubleToNdecimalPlaces(xOrYGeoCodeStringArray[1], 6);
+
+        ByteArrayOutputStream aOutputStream = null;
+        try {
+            String requestSpecString = AppWideStrings.googleMapsRequestCrossStreetsUrlString
+                    + mapThisGeoCodeString
+                    + "&key="
+                    + developmentTimeMapsApiKey;
+
+            URL mapUrl = new URL(requestSpecString);
+            InputStream aInputStream = mapUrl.openStream();
+            aOutputStream = new ByteArrayOutputStream(2048);
+
+            byte[] byteArray = new byte[2048];
+            int readLength = 0;
+
+            while ((readLength = aInputStream.read(byteArray)) != -1) {
+                aOutputStream.write(byteArray, 0, readLength);
+            }
+
+            aInputStream.close();
+            aOutputStream.flush();
+            aOutputStream.close();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return;
+        }
+
+        JsonReader aJsonReader = Json.createReader(
+                new ByteArrayInputStream(aOutputStream.toByteArray()));
+
+        JsonObject aJsonObjectOuter = aJsonReader.readObject();
+        if (!(aJsonObjectOuter.getString("status").equalsIgnoreCase("OK"))) {
+//            geoCodeTextField.setBackground(Color.RED);
+            return;
+        }
+
+        JsonArray aJsonArrayResults = aJsonObjectOuter.getJsonArray("results");
+
+        if (aJsonArrayResults == null) {
+//            geoCodeTextField.setBackground(Color.RED);
+            return;
+        }
+
+        Iterator<JsonValue> aIterator = aJsonArrayResults.iterator();
+
+        int index = 0;
+        String fullAddressString = "";
+        String crossStreetAddressString = "";
+        String thirdLineAddressString = "";
+
+        while (aIterator.hasNext()) {
+            JsonValue aJsonValueAddresses = aIterator.next();
+            if (aJsonValueAddresses.getValueType() == JsonValue.ValueType.OBJECT) {
+                JsonObject aJsonAddresesObject = (JsonObject) aJsonValueAddresses;
+                String addressString = aJsonAddresesObject.getString("formatted_address");
+                if ((addressString != null) && (addressString.length() > 0)) {
+                    if (index == 0) {
+                        fullAddressString = addressString;
+                        System.out.println("Full Address is " + fullAddressString);
+
+                    } else if (index == 1) {
+                        crossStreetAddressString = addressString;
+                        System.out.println("Cross Street Address is " + crossStreetAddressString);
+
+                    } else if (index == 2) {
+                        thirdLineAddressString = addressString;
+                        if (addressString.contains("/")) {
+                            System.out.println("Cross Street Address is " + thirdLineAddressString);
+                        } else {
+                            System.out.println("3rd Address is " + thirdLineAddressString);
+                        }
+
+                    } else if (addressString.contains("/")) {
+                        crossStreetAddressString = addressString;
+                        System.out.println("Cross Street Address is " + crossStreetAddressString);
+                    } else {
+                        System.out.println("Generalized Address is " + addressString);
+                    }
+                }
+            }
+            index++;
+        }
+
+        officerLocationData.setText(fullAddressString);
+        officerCrossStreetData.setText(AppWideStrings.crossStreet + " " + crossStreetAddressString);
+        officerGeoPointData.setText(mapCenterX + "," + mapCenterY);
+    }
+
+    public class TimerThread extends Thread {
+        public void run(){
+            while(threadFlag) {
+                durationSeconds++;
+                showDurationTime();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     class Browser extends Region {
 
         final WebView browser = new WebView();
