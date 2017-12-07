@@ -229,6 +229,18 @@ public class OfficerLocationMapPanel extends JPanel {
         handledButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        browser.removeMarker();
+                    }
+                });
+//                Platform.runLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        browser.changeMarker(42.0978f, 124.354865f);
+//                    }
+//                });
                 handledOfficer();
             }
         });
@@ -281,7 +293,7 @@ public class OfficerLocationMapPanel extends JPanel {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    browser.gotoLocation(lat, lon);
+                    browser.findOfficer(lat, lon);
                 }
             });
             handledButton.setConfiguration(new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
@@ -289,6 +301,13 @@ public class OfficerLocationMapPanel extends JPanel {
             threadFlag = true;
             TimerThread thread = new TimerThread();
             thread.start();
+        } else {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    browser.changeMarker(41.0978f, 124.354865f);
+                }
+            });
         }
         reverseGeocodeCurrentOfficerLocFromXY(lat + ", " + lon);
     }
@@ -451,9 +470,14 @@ public class OfficerLocationMapPanel extends JPanel {
         public void loadURL(URL url) {
             webEngine.load(url.toExternalForm());
         }
-
-        public void gotoLocation(float lat, float lng) {
-            webEngine.executeScript("gotoLocationWithPicker(" + lat + "," + lng + ")");
+        public void removeMarker() {
+            webEngine.executeScript("removeMarker()");
+        }
+        public void changeMarker(float lat, float lng) {
+            webEngine.executeScript("changeMarker(" + lat + "," + lng + ")");
+        }
+        public void findOfficer(float lat, float lng) {
+            webEngine.executeScript("findOfficer(" + lat + "," + lng + ")");
         }
         @Override protected void layoutChildren() {
             double w = getWidth();
