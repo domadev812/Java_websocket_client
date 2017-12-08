@@ -63,8 +63,8 @@ public class OfficerProfilePanel extends JPanel {
                 TableLayout.FILL
         }, {
                 // rows
-                TableLayout.PREFERRED,
-                TableLayout.PREFERRED
+                TableLayout.FILL,
+                TableLayout.FILL
         }};
 
         JPanel hasTwoRowsPanel = new JPanel(new TableLayout(officerProfilePanelLayoutSpec));
@@ -97,13 +97,13 @@ public class OfficerProfilePanel extends JPanel {
                 // rows
                 0,
                 TableLayout.PREFERRED,      // Officer Name
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Gender
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Race
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Age
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED      // Officer Height
         }};
         JPanel leftColPanel = new JPanel(new TableLayout(leftColPanelLayoutSpec));
@@ -163,10 +163,10 @@ public class OfficerProfilePanel extends JPanel {
         double rightColPanelLayoutSpec[][] = {{
                 // columns
                 0,
-                100,      // Label
+                90,      // Label
                 10
         }, {
-                100
+                90
         }};
         JPanel rightColPanel = new JPanel(new TableLayout(rightColPanelLayoutSpec));
         currentOfficerPicLabel = new JLabel();
@@ -183,13 +183,13 @@ public class OfficerProfilePanel extends JPanel {
                 30
         }, {
                 // rows
-                0,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Weight
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Badge
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Blood
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Allergy
         }};
 
@@ -245,9 +245,9 @@ public class OfficerProfilePanel extends JPanel {
                 10
         }, {
                 20,
-                TableLayout.PREFERRED,      // Left and Right
-                10,
-                TableLayout.PREFERRED,
+                TableLayout.FILL,      // Left and Right
+                0,
+                TableLayout.FILL,
                 15
         }};
         row1Panel = new JPanel(new TableLayout(row1PanelLayoutSpec));
@@ -271,17 +271,17 @@ public class OfficerProfilePanel extends JPanel {
                 // rows
                 15,
                 TableLayout.PREFERRED,      // Officer Phone
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Email
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Emergency Relationship
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Emergency Contact Number
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Rank
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Department
-                10,
+                TableLayout.FILL,
                 TableLayout.PREFERRED,      // Officer Department Phone
                 15
         }};

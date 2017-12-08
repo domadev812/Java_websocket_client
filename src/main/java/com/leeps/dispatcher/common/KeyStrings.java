@@ -13,6 +13,7 @@ public interface KeyStrings {
     // Action Value
     String actionLogin = "login";
     String keyReconnect = "reconnect";
+    String keyChangePassword = "change_dispatcher_password";
     //JSON Key
     String keyErrorCode = "errorCode";
 
@@ -22,6 +23,7 @@ public interface KeyStrings {
     String keyLastName = "last_name";
     String keyUserID = "user_id";
     String keyPassword = "password";
+    String keyUserPassword = "user_password";
     String keyStateList = "state_list";
     String keyStateName = "state_name";
     String keyStateCode = "state_code";

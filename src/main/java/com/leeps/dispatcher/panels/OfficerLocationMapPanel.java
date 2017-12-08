@@ -222,7 +222,39 @@ public class OfficerLocationMapPanel extends JPanel {
 
         geoPointPanel.add(officerGeoPointData, BorderLayout.CENTER);
         geoPointPanel.add(officerGeoPointLocation, BorderLayout.WEST);
-//        geoPointPanel.add(officerGeoPointGoto, BorderLayout.EAST);
+        officerGeoPointLocation.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                lat = (float) appWideCallsService.getLat();
+                lon = (float) appWideCallsService.getLon();
+                Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            browser.findOfficer(lat, lon);
+                        }
+                    });
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
 
         handledButton = new MaterialButton("HANDLED", new Color(47, 128, 237), Color.WHITE, new Color(9, 90, 220));
         handledButton.setFont(Roboto.BOLD.deriveFont(20.0f));
@@ -235,16 +267,10 @@ public class OfficerLocationMapPanel extends JPanel {
                         browser.removeMarker();
                     }
                 });
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        browser.changeMarker(42.0978f, 124.354865f);
-//                    }
-//                });
                 handledOfficer();
             }
         });
-        officerHandledTime = new JLabel("10:48");
+        officerHandledTime = new JLabel("");
         officerHandledTime.setFont(Roboto.BOLD.deriveFont(16.0f));
         officerHandledTime.setForeground(AppWideStrings.primaryColor);
         officerHandledTime.setHorizontalAlignment(SwingConstants.CENTER);
@@ -284,6 +310,7 @@ public class OfficerLocationMapPanel extends JPanel {
         officerLocationData.setText("");
         officerGeoPointData.setText("");
         officerHandledTime.setText("");
+        officerGeoPointLocation.setVisible(false);
     }
 
     public void initLocation(boolean flag) {
@@ -298,6 +325,7 @@ public class OfficerLocationMapPanel extends JPanel {
             });
             handledButton.setConfiguration(new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
             handledButton.setEnabled(true);
+            officerGeoPointLocation.setVisible(true);
             threadFlag = true;
             TimerThread thread = new TimerThread();
             thread.start();
@@ -305,7 +333,7 @@ public class OfficerLocationMapPanel extends JPanel {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    browser.changeMarker(41.0978f, 124.354865f);
+                    browser.changeMarker(lat, lon);
                 }
             });
         }
@@ -322,7 +350,7 @@ public class OfficerLocationMapPanel extends JPanel {
         if(secs < 10) durationTime += "0" + secs;
         else durationTime += secs;
 
-        officerHandledTime.setText(durationTime);
+        officerHandledTime.setText(AppWideStrings.elapsedTime + " " + durationTime);
     }
     private double truncateDoubleToNdecimalPlaces(
             String pInputDoubleString, int pKeepNdecimalPlaces) {

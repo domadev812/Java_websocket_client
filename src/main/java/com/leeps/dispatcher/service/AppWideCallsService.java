@@ -76,7 +76,7 @@ public class AppWideCallsService {
     public void blinkAppIcon(boolean pShouldBlink) {
         appFrame.blinkAppIcon(pShouldBlink);
     }
-
+    public void updatePassword(String newPassword) {appFrame.updatePassword(newPassword);}
     public void showHandledOfficer() {
         appFrame.showHandledOfficer();
     }
@@ -159,6 +159,9 @@ public class AppWideCallsService {
     }
     public boolean isHandled() {return appFrame.isHandled();}
     public void setHandled(boolean isHandled){appFrame.setHandled(isHandled);}
+
+    public boolean isConnected() {return appFrame.isConnected();}
+    public void setConnected(boolean isConnected){appFrame.setConnected(isConnected);}
 
     public void setLat(double lat){appFrame.setLat(lat);}
     public double getLat(){return appFrame.getLat();}

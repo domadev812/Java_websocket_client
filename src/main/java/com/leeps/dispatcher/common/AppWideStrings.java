@@ -130,7 +130,7 @@ public interface AppWideStrings {
             "<html><strong>Important:</strong> Alarms are taken in order.</html>";
     public String buttonTextCloseString = "Close";
     public String handleOfficerButtonStirng = "Handle";
-
+    public String elapsedTime = "ELAPSED TIME:";
     // Chart Panel
 
     public Range liveDataGraphOutsideTempAtRestAverageRange = new Range(65.0, 85.0);

@@ -42,7 +42,7 @@ public class AppFrame extends JFrame {
     JSONObject handledOfficer = null;
     boolean isHandled;
     double lat = 40.126936, lon = 124.394631;
-    int durationSeconds = 0;
+    boolean isConnected;
 
     //Service and Constant Class Variable
     private AppWideCallsService appWideCallsService;
@@ -123,7 +123,7 @@ public class AppFrame extends JFrame {
         });
         threadConnection.start();
 
-
+        isConnected = false;
         isHandled = false;
         initCustomizedUiWidgetsFactory();
         initProperties();
@@ -158,7 +158,13 @@ public class AppFrame extends JFrame {
 
     public JSONObject getDispatchObject() {return this.dispatcherProfile;}
     public int getDispatcherID() {return dispatcherID;}
-
+    public void updatePassword(String newPassword) {
+        try {
+            this.dispatcherProfile.put(KeyStrings.keyUserPassword, newPassword);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public void setHandledOfficer(JSONObject jsonObject){this.handledOfficer = jsonObject;}
     public JSONObject getHandledOfficer() {return this.handledOfficer;}
 
@@ -187,8 +193,11 @@ public class AppFrame extends JFrame {
         }
         updateHowManyAlarmsPending();
     }
-    public void setHandled(boolean isHandled) {this.isHandled = isHandled;}
+    public void setHandled(boolean isHandled) {this.isHandled = isHandled; changeDispatcherState();}
     public boolean isHandled() {return this.isHandled;}
+
+    public void setConnected(boolean isConnected) {this.isConnected = isConnected;}
+    public boolean isConnected() {return this.isConnected;}
 
     public void setLat(double lat){this.lat = lat;}
     public double getLat(){return this.lat;}
@@ -261,11 +270,21 @@ public class AppFrame extends JFrame {
             lblConnectionImage.setIcon(disconnectedImageIcon);
         }
     }
-
+    private void changeDispatcherState() {
+        lblApplicationStatus.setForeground(Color.WHITE);
+        if(isHandled) {
+            lblApplicationStatus.setText(AppWideStrings.applicationHandleOfficerString);
+        } else if(howManyAlarmsPending == 0) {
+            lblApplicationStatus.setText(AppWideStrings.applicationAwaitingOfficers);
+        } else {
+            lblApplicationStatus.setForeground(Color.RED);
+            lblApplicationStatus.setText("(" + howManyAlarmsPending + ")" + AppWideStrings.applicationOfficerNeedAssistanceString);
+        }
+    }
     private void updateHowManyAlarmsPending() {
         howManyAlarmsPending = waitingOfficerList.size();
         alarmsPendingButton.setText(AppWideStrings.alarmPendingButtonString + howManyAlarmsPending);
-
+        changeDispatcherState();
         if (howManyAlarmsPending == 0) {
             alarmsPendingButton.setConfiguration(new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x4F, 0x4F, 0x4F));
             blinkAppIcon(false);
@@ -540,7 +559,7 @@ public class AppFrame extends JFrame {
     }
 
     private void buildBottomPanel() {
-        lblApplicationStatus.setText(AppWideStrings.applicationStatusString + " " + AppWideStrings.applicationAwaitingOfficers);
+        lblApplicationStatus.setText(AppWideStrings.applicationAwaitingOfficers);
         lblApplicationStatus.setForeground(Color.WHITE);
         lblApplicationStatus.setFont(common.getRobotoBoldFont(14.0f));
 
@@ -667,12 +686,12 @@ public class AppFrame extends JFrame {
             public void call(Object... args) {
                 changeConnectionState(true);
                 loadAddressData();
+                setConnected(true);
                 System.out.println(appWideCallsService.getCurrentTime() + " --- " + "Connected");
             }
         }).on(Socket.EVENT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                System.out.println("Event error");
             }
         }).on(Socket.EVENT_RECONNECT, new Emitter.Listener() {
             @Override
@@ -683,8 +702,7 @@ public class AppFrame extends JFrame {
         }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-//                setWebSocketHandshakeSuccess(false);
-//                showServerConnectionRetryingPanel();
+                setConnected(false);
             }
         }).on(KeyStrings.fromServer, new Emitter.Listener() {
             @Override

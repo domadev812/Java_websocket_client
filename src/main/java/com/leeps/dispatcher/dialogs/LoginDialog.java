@@ -196,12 +196,16 @@ public class LoginDialog extends BaseDialog implements ActionListener{
 
     private void login() {
         JSONObject jsonObject = new JSONObject();
-
+        if(!appWideCallsService.isConnected()) {
+            showErrorMessage("Connection Error!!!");
+            return;
+        }
         try {
             jsonObject.put(KeyStrings.keyAction, KeyStrings.actionLogin);
             jsonObject.put(KeyStrings.keyEmail, txtEmail.getText());
             jsonObject.put(KeyStrings.keyPassword, String.valueOf(txtPassword.getPassword()));
             appWideCallsService.sendToServer(jsonObject);
+            btnLogin.setEnabled(false);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -211,5 +215,6 @@ public class LoginDialog extends BaseDialog implements ActionListener{
 
     public void showErrorMessage(String errorMessage) {
         lblErrorMessage.setText(errorMessage);
+        btnLogin.setEnabled(true);
     }
 }
