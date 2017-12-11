@@ -8,10 +8,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class BaseMenuItem extends JMenuItem{
-    BaseMenuItem item;
     public BaseMenuItem (String title) {
         super(title);
-        item = this;
         setBackground(AppWideStrings.primaryColor);
         setOpaque(true);
         setForeground(Color.WHITE);

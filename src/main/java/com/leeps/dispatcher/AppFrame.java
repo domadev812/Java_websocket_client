@@ -131,6 +131,10 @@ public class AppFrame extends JFrame {
         isHandled = false;
         initCustomizedUiWidgetsFactory();
         initProperties();
+
+        loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
+        loginDialog.setVisible(true);
+
         layoutUI();
         alarmsPendingDialog = new AlarmsPendingDialog(this, 640, 250, customizedUiWidgetsFactory, appWideCallsService);
         setContentPane(contentPanel);;
@@ -142,8 +146,6 @@ public class AppFrame extends JFrame {
         makeAppPreferredAppLocationAndSize();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
-        loginDialog.setVisible(true);
         setVisible(true);
     }
 
@@ -264,19 +266,10 @@ public class AppFrame extends JFrame {
         BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2 = output.createGraphics();
-
-        // This is what we want, but it only does hard-clipping, i.e. aliasing
-        // g2.setClip(new RoundRectangle2D ...)
-
-        // so instead fake soft-clipping by first drawing the desired clip shape
-        // in fully opaque white with antialiasing enabled...
         g2.setComposite(AlphaComposite.Src);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(Color.WHITE);
         g2.fill(new RoundRectangle2D.Float(0, 0, w, h, cornerRadius, cornerRadius));
-
-        // ... then compositing the image on top,
-        // using the white shape from above as alpha source
         g2.setComposite(AlphaComposite.SrcAtop);
         g2.drawImage(image, 0, 0, null);
 
@@ -447,7 +440,7 @@ public class AppFrame extends JFrame {
 
         appMenuBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         dispatcherProfileMenu = new JMenu(AppWideStrings.menuBarDispatcherString);
-        dispatcherProfileMenu.setOpaque(true);
+
         BaseMenuItem itemManage = new BaseMenuItem("MANAGE STATION");
         BaseMenuItem itemPassword = new BaseMenuItem("CHANGE PASSWORD");
         BaseMenuItem itemExit = new BaseMenuItem("EXIT");
@@ -460,6 +453,7 @@ public class AppFrame extends JFrame {
         sep.setOpaque(true);
         dispatcherProfileMenu.add(sep);
         dispatcherProfileMenu.add(itemExit);
+        itemManage.getParent().setBackground(AppWideStrings.primaryColor);
 
         windowMenu = new JMenu(
                 AppWideStrings.menuBarWindowString);
@@ -474,6 +468,7 @@ public class AppFrame extends JFrame {
         windowMenu.add(sep1);
         windowMenu.add(item24Display);
         windowMenu.add(item27Display);
+        itemHandledOfficer.getParent().setBackground(AppWideStrings.primaryColor);
 
         helpMenu = new JMenu(AppWideStrings.menuBarHelpString);
         BaseMenuItem itemDisclaimer = new BaseMenuItem("DISCLAIMER");
@@ -484,6 +479,7 @@ public class AppFrame extends JFrame {
         helpMenu.add(itemPrivacy);
         helpMenu.add(itemTerms);
         helpMenu.add(itemFaq);
+        itemDisclaimer.getParent().setBackground(AppWideStrings.primaryColor);
 
         applyMenuEffect(dispatcherProfileMenu);
         applyMenuEffect(windowMenu);
