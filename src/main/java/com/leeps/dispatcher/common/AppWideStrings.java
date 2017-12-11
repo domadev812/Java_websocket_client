@@ -185,4 +185,25 @@ public interface AppWideStrings {
     public String liveDataGraphSkinTempHoverHelpString = "As measured from wrist sensor";
     public Range liveDataGraphSkinTempRange = new Range(-32.0, 120.0);
     public Range liveDataGraphSkipTempAtRestAverageRange = new Range(91.0, 93.0);
+
+    public String legalItemsTitleDisclaimerString = "  DISCLAIMER  ";
+    public String legalItemsTitlePrivacyString = "  Privacy Policy  ";
+    public String legalItemsTitleTermsString = "  Terms of Service  ";
+    public String legalItemsTitleFAQString = "  FAQ  ";
+
+    public String resourcesTopdownReadFileLoc =
+            "./resources/";
+    public String legalItemsDisclaimerTextFilename = "DisclaimerText.txt";
+    public String legalItemsPrivacyTextFilename = "PrivacyPolicy.txt";
+    public String legalItemsTermsTextFilename = "TermsOfService.txt";
+    public String legalItemsFAQTextFilename = "FAQ.txt";
+
+    public String centerPanelLegalItemsDisclaimerCardLayoutKey =
+            "centerPanelLegalItemsDisclaimerCardLayoutKey";
+    public String centerPanelLegalItemsPrivacyCardLayoutKey =
+            "centerPanelLegalItemsPrivacyCardLayoutKey";
+    public String centerPanelLegalItemsTermsCardLayoutKey =
+            "centerPanelLegalItemsTermsCardLayoutKey";
+    public String centerPanelLegalItemsFAQCardLayoutKey =
+            "centerPanelLegalItemsFAQCardLayoutKey";
 }

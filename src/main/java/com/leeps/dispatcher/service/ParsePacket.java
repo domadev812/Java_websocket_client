@@ -57,25 +57,64 @@ public class ParsePacket {
                     case officer_handle_success:
                         handleOfficerSuccess(jsonObject);
                         break;
-//                    case dispatcher_handled_officer:
-//                        anotherDispatcherHandledOfficer(jsonObject);
-//                        break;
-//                    case already_handled:
-//                        appFrame.setHandled(false);
-//                        break;
-//                    case good_answer:
-//                        goodAnswer(jsonObject);
-//                        break;
+                    case dispatcher_handled_officer:
+                        anotherDispatcherHandledOfficer(jsonObject);
+                        break;
+                    case already_handled:
+                        appFrame.setHandled(false);
+                        break;
+                    case good_answer:
+                        goodAnswer(jsonObject);
+                        break;
                     case position_report:
                         updatePosition(jsonObject);
                         break;
-//                    case graph_data:
-//                        initGraphData(jsonObject);
-//                        break;
+                    case graph_data:
+                        initGraphData(jsonObject);
+                        break;
                 }
             }
         });
         ts.start();
+    }
+    private void initGraphData(JSONObject jsonObject)
+    {
+        appFrame.initGraphData(jsonObject);
+    }
+    private void goodAnswer(JSONObject jsonObject)
+    {
+        String answer = "";
+        try {
+            answer = jsonObject.getString(KeyStrings.keyAnswer);
+            if(answer.equals("no"))
+            {
+                JSONObject object = new JSONObject();
+                object.put(KeyStrings.keyAction, KeyStrings.keyCurrentOfficerHandled);
+                object.put(KeyStrings.keyOfficerID, jsonObject.getInt(KeyStrings.keyOfficerID));
+                appFrame.setHandledOfficer(null);
+                appFrame.setHandled(false);
+
+                appFrame.initGraphData(null);
+                appFrame.showOfficerProfileUiDataModel(false);
+                appFrame.initLocationData();
+                appFrame.sendToServer(object);
+            } else{
+                JSONObject object = new JSONObject();
+                object.put(KeyStrings.keyAction, KeyStrings.keyReportDelayTime);
+                object.put(KeyStrings.keyDelayTime, KeyStrings.delay_urgent_time);
+                object.put(KeyStrings.keyOfficerID, jsonObject.getInt(KeyStrings.keyOfficerID));
+                appFrame.sendToServer(object);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void anotherDispatcherHandledOfficer(JSONObject jsonObject)
+    {
+        appFrame.removeWaitingOfficer(jsonObject);
     }
 
     private void updatePosition(JSONObject jsonObject)
@@ -106,7 +145,7 @@ public class ParsePacket {
                     e.printStackTrace();
                 }
                 appFrame.showLocationMap(false);
-//                appFrame.addGraphData(reportDate.getTime(), heartRate, motion, perspiration, temp);
+                appFrame.addGraphData(reportDate.getTime(), heartRate, motion, perspiration, temp);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -244,7 +283,7 @@ public class ParsePacket {
             object.put(KeyStrings.keyAction, KeyStrings.keyGoodAsk);
             object.put(KeyStrings.keyDispatcherID, appFrame.getDispatcherID());
             object.put(KeyStrings.keyOfficerID, officer.getInt(KeyStrings.keyID));
-            appFrame.showOfficerProfileUiDataModel();
+            appFrame.showOfficerProfileUiDataModel(true);
             appFrame.showLocationMap(true);
             appFrame.sendToServer(object);
 

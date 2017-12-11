@@ -1,13 +1,17 @@
 package com.leeps.dispatcher.service;
 
 import com.leeps.dispatcher.AppFrame;
+import com.leeps.dispatcher.common.KeyStrings;
 import com.leeps.dispatcher.panels.*;
 import com.leeps.dispatcher.uidatamodel.*;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,6 +181,68 @@ public class AppWideCallsService {
         return appFrame.getDispatcherID();
     }
 
+    public void initLocationData() {
+        officerLocationMapPanel.initLocationData();
+    }
     public void initGraphData(JSONObject jsonObject){
+        if(jsonObject == null)
+        {
+            officerStatusGraphPanel.removeAllGraph();
+            return;
+        }
+        long currentTimeMillis = System.currentTimeMillis();
+        long sixtyMinutesAgoMillis = currentTimeMillis - 3600000;
+        long lastSixtyMinutesMillis = sixtyMinutesAgoMillis;
+        JSONArray jsonArray = new JSONArray();
+        try {
+            jsonArray = jsonObject.getJSONArray(KeyStrings.keyValues);
+            for (int index = jsonArray.length() - 1; index >= 0; index--) {
+                JSONObject stateObject = jsonArray.getJSONObject(index);
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date reportDate = null;
+                try {
+                    reportDate = format.parse(stateObject.getString(KeyStrings.keyReportTime));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                lastSixtyMinutesMillis = reportDate.getTime();
+                officerStatusGraphPanel.addGraphPointHeartRate(
+                        lastSixtyMinutesMillis, stateObject.getDouble(KeyStrings.keyHeartRate));
+
+                officerStatusGraphPanel.addGraphPointMotion(
+                        lastSixtyMinutesMillis, stateObject.getDouble(KeyStrings.keyMotion));
+
+                officerStatusGraphPanel.addGraphPointPerspiration(
+                        lastSixtyMinutesMillis, stateObject.getDouble(KeyStrings.keyPerspiration));
+
+                officerStatusGraphPanel.addGraphPointSkinTemp(
+                        lastSixtyMinutesMillis, stateObject.getDouble(KeyStrings.keyTemp));
+
+                officerStatusGraphPanel.addGraphPointOutsideTemp(
+                        lastSixtyMinutesMillis, stateObject.getDouble(KeyStrings.keyTemp));
+
+                //lastSixtyMinutesMillis += 60000;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void addGraphData(long reportTime, double heartRate, double motion, double perspiration, double temp)
+    {
+        officerStatusGraphPanel.addGraphPointHeartRate(
+                reportTime, heartRate);
+
+        officerStatusGraphPanel.addGraphPointMotion(
+                reportTime, motion);
+
+        officerStatusGraphPanel.addGraphPointPerspiration(
+                reportTime, perspiration);
+
+        officerStatusGraphPanel.addGraphPointSkinTemp(
+                reportTime, temp);
+        officerStatusGraphPanel.addGraphPointOutsideTemp(
+                reportTime, temp);
+        System.out.println(getCurrentTime() + " --- " + "Refresh Graph!!!");
     }
 }

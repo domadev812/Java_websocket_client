@@ -3,9 +3,7 @@ package com.leeps.dispatcher;
 import com.leeps.dispatcher.common.*;
 import com.leeps.dispatcher.dialogs.*;
 import com.leeps.dispatcher.material.MaterialButton;
-import com.leeps.dispatcher.panels.OfficerLocationMapPanel;
-import com.leeps.dispatcher.panels.OfficerProfilePanel;
-import com.leeps.dispatcher.panels.OfficerStatusGraphPanel;
+import com.leeps.dispatcher.panels.*;
 import com.leeps.dispatcher.service.*;
 import com.leeps.dispatcher.uidatamodel.*;
 import de.craften.ui.swingmaterial.fonts.Roboto;
@@ -24,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -89,6 +88,11 @@ public class AppFrame extends JFrame {
     private OfficerProfilePanel officerProfilePanel;
     private JSplitPane hasLeftAndRightPanelsJSplitPane;
     private JSplitPane hasTopAndBottomPanelsJSplitPane;
+
+    private LegalItemsDisclaimerPanel legalItemsDisclaimerPanel;
+    private LegalItemsPrivacyPanel legalItemsPrivacyPanel;
+    private LegalItemsTermsPanel legalItemsTermsPanel;
+    private LegalItemsFAQPanel legalItemsFAQPanel;
 
     private ArrayList<StateModel> listState = new ArrayList<StateModel>();
     private ArrayList<CityModel> listCity = new ArrayList<CityModel>();
@@ -237,9 +241,49 @@ public class AppFrame extends JFrame {
         } catch (IOException ex) {
             System.err.println("app - initImages. Could not read an officer profile picture - "
                     + ex.getMessage());
+            return;
         }
+        officerProfileImage = resizeImage(officerProfileImage, 90, 90);
+        officerProfileImage = makeRoundedCorner(officerProfileImage, 100);
     }
 
+    public static BufferedImage resizeImage(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
+    }
+
+    public BufferedImage makeRoundedCorner(BufferedImage image, int cornerRadius) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2 = output.createGraphics();
+
+        // This is what we want, but it only does hard-clipping, i.e. aliasing
+        // g2.setClip(new RoundRectangle2D ...)
+
+        // so instead fake soft-clipping by first drawing the desired clip shape
+        // in fully opaque white with antialiasing enabled...
+        g2.setComposite(AlphaComposite.Src);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(Color.WHITE);
+        g2.fill(new RoundRectangle2D.Float(0, 0, w, h, cornerRadius, cornerRadius));
+
+        // ... then compositing the image on top,
+        // using the white shape from above as alpha source
+        g2.setComposite(AlphaComposite.SrcAtop);
+        g2.drawImage(image, 0, 0, null);
+
+        g2.dispose();
+
+        return output;
+    }
     private void initAppIcon() {
         try {
             InputStream imageInputStream1 = getClass().getResourceAsStream(
@@ -419,8 +463,15 @@ public class AppFrame extends JFrame {
 
         windowMenu = new JMenu(
                 AppWideStrings.menuBarWindowString);
+        final BaseMenuItem itemHandledOfficer = new BaseMenuItem("Handled Officer");
         final BaseMenuItem item24Display = new BaseMenuItem("24INCH DISPLAY");
         final BaseMenuItem item27Display = new BaseMenuItem("27INCH DISPLAY");
+        windowMenu.add(itemHandledOfficer);
+        JSeparator sep1 = new JSeparator(SwingConstants.HORIZONTAL);
+        sep1.setBackground(AppWideStrings.primaryColor);
+        sep1.setForeground(Color.WHITE);
+        sep1.setOpaque(true);
+        windowMenu.add(sep1);
         windowMenu.add(item24Display);
         windowMenu.add(item27Display);
 
@@ -483,6 +534,13 @@ public class AppFrame extends JFrame {
             }
         });
 
+        itemHandledOfficer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                showHandledOfficer();
+            }
+        });
+
         item24Display.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent pE) {
@@ -506,15 +564,57 @@ public class AppFrame extends JFrame {
                 setBounds(appWideCallsService.positionAndSize27inchWideMonitor());
             }
         });
-        helpMenu.addMouseListener(new MouseAdapter() {
+
+        itemDisclaimer.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent pE) {
-                // showHelpPanel();
+                ((CardLayout) (centerPanel.getLayout())).show(
+                        centerPanel, AppWideStrings.centerPanelLegalItemsDisclaimerCardLayoutKey);
+                legalItemsDisclaimerPanel.scrollToTop();
+            }
+        });
+
+        itemTerms.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                ((CardLayout) (centerPanel.getLayout())).show(
+                        centerPanel, AppWideStrings.centerPanelLegalItemsTermsCardLayoutKey);
+                legalItemsTermsPanel.scrollToTop();
+            }
+        });
+
+        itemPrivacy.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                ((CardLayout) (centerPanel.getLayout())).show(
+                        centerPanel, AppWideStrings.centerPanelLegalItemsPrivacyCardLayoutKey);
+                legalItemsPrivacyPanel.scrollToTop();
+            }
+        });
+
+        itemFaq.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                ((CardLayout) (centerPanel.getLayout())).show(
+                        centerPanel, AppWideStrings.centerPanelLegalItemsFAQCardLayoutKey);
+                legalItemsFAQPanel.scrollToTop();
             }
         });
     }
 
     private void buildCenterPanel() {
+        legalItemsDisclaimerPanel = new LegalItemsDisclaimerPanel(
+                appWideCallsService, customizedUiWidgetsFactory);
+
+        legalItemsPrivacyPanel = new LegalItemsPrivacyPanel(
+                appWideCallsService, customizedUiWidgetsFactory);
+
+        legalItemsTermsPanel = new LegalItemsTermsPanel(
+                appWideCallsService, customizedUiWidgetsFactory);
+
+        legalItemsFAQPanel = new LegalItemsFAQPanel(
+                appWideCallsService, customizedUiWidgetsFactory);
+
         officerStatusGraphPanel = new OfficerStatusGraphPanel(
                 customizedUiWidgetsFactory, appWideCallsService);
         appWideCallsService.setOfficerStatusGraphPanel(officerStatusGraphPanel);
@@ -554,6 +654,14 @@ public class AppFrame extends JFrame {
                 BorderFactory.createLineBorder(Color.GRAY)));
         centerPanel.add(hasTopAndBottomPanelsJSplitPane,
                 AppWideStrings.centerOfficerPanelCardLayoutKey);
+        centerPanel.add(legalItemsDisclaimerPanel,
+                AppWideStrings.centerPanelLegalItemsDisclaimerCardLayoutKey);
+        centerPanel.add(legalItemsPrivacyPanel,
+                AppWideStrings.centerPanelLegalItemsPrivacyCardLayoutKey);
+        centerPanel.add(legalItemsTermsPanel,
+                AppWideStrings.centerPanelLegalItemsTermsCardLayoutKey);
+        centerPanel.add(legalItemsFAQPanel,
+                AppWideStrings.centerPanelLegalItemsFAQCardLayoutKey);
         hasTopAndBottomPanelsJSplitPane.setDividerSize(3);
         hasLeftAndRightPanelsJSplitPane.setDividerSize(5);
     }
@@ -605,11 +713,30 @@ public class AppFrame extends JFrame {
                 centerPanel, AppWideStrings.centerOfficerPanelCardLayoutKey);
     }
 
-    public void showOfficerProfileUiDataModel(){
-        appWideCallsService.showOfficerProfileUiDataModel(handledOfficer);
+    public void showOfficerProfileUiDataModel(boolean flag){
+        if(flag)
+            appWideCallsService.showOfficerProfileUiDataModel(handledOfficer);
+        else
+            appWideCallsService.showOfficerProfileUiDataModel(null);
     }
     public void showLocationMap(boolean flag /* true: initLocation, false: updateLocation */) {
         appWideCallsService.showLocationMap(flag);
+    }
+
+    public void initOfficerGraph(boolean flag){
+        officerStatusGraphPanel.initOfficerGraph(flag);
+    }
+
+    public void initGraphData(JSONObject jsonObject) {
+        appWideCallsService.initGraphData(jsonObject);
+    }
+
+    public void addGraphData(long reportTime, double heartRate, double motion, double perspiration, double temp)
+    {
+        appWideCallsService.addGraphData(reportTime, heartRate, motion, perspiration, temp);
+    }
+    public void initLocationData() {
+        appWideCallsService.initLocationData();
     }
     //Callback Process Functions
     public void logIn(int errorCode, JSONObject jsonObject)     //Login CallBack
