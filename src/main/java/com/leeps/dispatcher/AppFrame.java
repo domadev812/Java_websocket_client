@@ -6,6 +6,7 @@ import com.leeps.dispatcher.material.MaterialButton;
 import com.leeps.dispatcher.panels.*;
 import com.leeps.dispatcher.service.*;
 import com.leeps.dispatcher.uidatamodel.*;
+import com.sun.corba.se.spi.activation.LocatorPackage.ServerLocation;
 import de.craften.ui.swingmaterial.fonts.Roboto;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -24,11 +25,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -42,6 +40,7 @@ public class AppFrame extends JFrame {
     boolean isHandled;
     double lat = 40.126936, lon = 124.394631;
     boolean isConnected;
+    private String ipAddress = "";
 
     //Service and Constant Class Variable
     private AppWideCallsService appWideCallsService;
@@ -114,6 +113,7 @@ public class AppFrame extends JFrame {
         appWideCallsService = new AppWideCallsService();
         appWideCallsService.setAppFrame(this);
 
+
         Thread threadConnection = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -131,7 +131,7 @@ public class AppFrame extends JFrame {
         isHandled = false;
         initCustomizedUiWidgetsFactory();
         initProperties();
-
+        getIPAddress();
         loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
         loginDialog.setVisible(true);
 
@@ -140,7 +140,7 @@ public class AppFrame extends JFrame {
         setContentPane(contentPanel);;
 //        addWindowListener(new FrameWindowListener());
 //        addComponentListener(new FrameResizedListener());
-
+        loadImageFromURL();
         setJMenuBar(appMenuBar);
         setTitle(AppWideStrings.appTitle);
         makeAppPreferredAppLocationAndSize();
@@ -374,6 +374,57 @@ public class AppFrame extends JFrame {
         }
     }
 
+    private void getIPAddress() {
+        URL whatismyip = null;
+        try {
+            whatismyip = new URL("http://checkip.amazonaws.com");
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new InputStreamReader(
+                        whatismyip.openStream()));
+                ipAddress = in.readLine(); //you get the IP as a String
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadImageFromURL() {
+        String imageSpecString = "http://ec2-34-213-184-150.us-west-2.compute.amazonaws.com/leeps/images/1513049944.png";
+
+        URL url = null;
+        try {
+            url = new URL(imageSpecString);
+            Image image = ImageIO.read(url);
+            BufferedImage profileImage = toBufferedImage(image);
+            appWideCallsService.setCurrentOfficerPicBufferedImage(profileImage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
     // UI Effect Service Functions
     private void initCustomizedUiWidgetsFactory() {
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();
@@ -617,7 +668,7 @@ public class AppFrame extends JFrame {
 
         officerProfilePanel = new OfficerProfilePanel(appWideCallsService);
         appWideCallsService.setOfficerProfilePanel(officerProfilePanel);
-        appWideCallsService.setCurrentOfficerPicBufferedImage(officerProfileImage);
+//        appWideCallsService.setCurrentOfficerPicBufferedImage(officerProfileImage);
 
         officerLocationMapPanel = new OfficerLocationMapPanel(
                 appWideCallsService, customizedUiWidgetsFactory);

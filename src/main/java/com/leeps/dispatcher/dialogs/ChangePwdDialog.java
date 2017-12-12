@@ -35,7 +35,7 @@ public class ChangePwdDialog extends BaseDialog implements ActionListener {
         setBackButtonVisible(true);
         setBottomVisible(false);
         setTitle(AppWideStrings.changePassword);
-        setUndecorated(false);
+        setUndecorated(true);
         setResizable(false);
         appWideCallsService = pAppWideCallsService;
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();

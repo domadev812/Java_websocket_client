@@ -77,7 +77,7 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         setBackButtonVisible(true);
         setBottomVisible(true);
         setTitle("DISPATCHER PROFILE");
-        setUndecorated(false);
+        setUndecorated(true);
 
         appWideCallsService = pAppWideCallsService;
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();
