@@ -140,7 +140,6 @@ public class AppFrame extends JFrame {
         setContentPane(contentPanel);;
 //        addWindowListener(new FrameWindowListener());
 //        addComponentListener(new FrameResizedListener());
-        loadImageFromURL();
         setJMenuBar(appMenuBar);
         setTitle(AppWideStrings.appTitle);
         makeAppPreferredAppLocationAndSize();
@@ -210,6 +209,10 @@ public class AppFrame extends JFrame {
 
     public void setLon(double lon){this.lon = lon;}
     public double getLon(){return this.lon;}
+
+    public BufferedImage getEmptyImage() {
+        return officerProfileImage;
+    }
     //Init Functions
     private void initProperties() {
         Properties aProperties = new Properties();
@@ -239,44 +242,16 @@ public class AppFrame extends JFrame {
                     .getResourceAsStream(AppWideStrings.emptyOfficerProfileImg);
             if (genericOfficerPicInputStream != null) {
                 officerProfileImage = ImageIO.read(genericOfficerPicInputStream);
+                officerProfileImage = appWideCallsService.resizeImage(officerProfileImage, 90, 90);
+                officerProfileImage = appWideCallsService.makeRoundedCorner(officerProfileImage, 100);
             }
         } catch (IOException ex) {
             System.err.println("app - initImages. Could not read an officer profile picture - "
                     + ex.getMessage());
             return;
         }
-        officerProfileImage = resizeImage(officerProfileImage, 90, 90);
-        officerProfileImage = makeRoundedCorner(officerProfileImage, 100);
     }
 
-    public static BufferedImage resizeImage(BufferedImage img, int newW, int newH) {
-        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g2d = dimg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-
-        return dimg;
-    }
-
-    public BufferedImage makeRoundedCorner(BufferedImage image, int cornerRadius) {
-        int w = image.getWidth();
-        int h = image.getHeight();
-        BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g2 = output.createGraphics();
-        g2.setComposite(AlphaComposite.Src);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.WHITE);
-        g2.fill(new RoundRectangle2D.Float(0, 0, w, h, cornerRadius, cornerRadius));
-        g2.setComposite(AlphaComposite.SrcAtop);
-        g2.drawImage(image, 0, 0, null);
-
-        g2.dispose();
-
-        return output;
-    }
     private void initAppIcon() {
         try {
             InputStream imageInputStream1 = getClass().getResourceAsStream(
@@ -392,39 +367,6 @@ public class AppFrame extends JFrame {
         }
     }
 
-    private void loadImageFromURL() {
-        String imageSpecString = "http://ec2-34-213-184-150.us-west-2.compute.amazonaws.com/leeps/images/1513049944.png";
-
-        URL url = null;
-        try {
-            url = new URL(imageSpecString);
-            Image image = ImageIO.read(url);
-            BufferedImage profileImage = toBufferedImage(image);
-            appWideCallsService.setCurrentOfficerPicBufferedImage(profileImage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
-        }
-
-        // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bimage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-
-        // Return the buffered image
-        return bimage;
-    }
     // UI Effect Service Functions
     private void initCustomizedUiWidgetsFactory() {
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();
@@ -668,7 +610,7 @@ public class AppFrame extends JFrame {
 
         officerProfilePanel = new OfficerProfilePanel(appWideCallsService);
         appWideCallsService.setOfficerProfilePanel(officerProfilePanel);
-//        appWideCallsService.setCurrentOfficerPicBufferedImage(officerProfileImage);
+        appWideCallsService.setCurrentOfficerPicBufferedImage(officerProfileImage);
 
         officerLocationMapPanel = new OfficerLocationMapPanel(
                 appWideCallsService, customizedUiWidgetsFactory);

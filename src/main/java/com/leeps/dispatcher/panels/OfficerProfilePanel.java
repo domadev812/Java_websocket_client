@@ -9,10 +9,13 @@ import layout.TableLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class OfficerProfilePanel extends JPanel {
@@ -367,6 +370,38 @@ public class OfficerProfilePanel extends JPanel {
         currentOfficerPicLabel.setIcon(new ImageIcon(pBufferedImage));
     }
 
+    private void loadImageFromURL() {
+        String imageSpecString = "http://ec2-34-213-184-150.us-west-2.compute.amazonaws.com/leeps/images/1513119167.png";
+
+        URL url = null;
+        try {
+            url = new URL(imageSpecString);
+            Image image = ImageIO.read(url);
+            BufferedImage profileImage = toBufferedImage(image);
+
+            profileImage = appWideCallsService.resizeImage(profileImage, 90, 90);
+            profileImage = appWideCallsService.makeRoundedCorner(profileImage, 100);
+            setCurrentOfficerPicBufferedImage(profileImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        return bimage;
+    }
+
     public void showOfficerProfileUiDataModel(JSONObject handledOfficer) {
         if (handledOfficer == null) {
             initProfile();
@@ -374,6 +409,7 @@ public class OfficerProfilePanel extends JPanel {
         }
 
         try {
+            loadImageFromURL();
             officerNameDataLabel.setText(handledOfficer.getString(KeyStrings.keyFirstName) + " " + handledOfficer.getString(KeyStrings.keyLastName));
             officerNameDataLabel.setToolTipText(officerNameDataLabel.getText());
 
@@ -434,5 +470,7 @@ public class OfficerProfilePanel extends JPanel {
 
         officerCurrentPoliceDepartmentDataLabel.setText("");
         officerDepartmentPhoneDataLabel.setText("");
+
+        setCurrentOfficerPicBufferedImage(appWideCallsService.getEmptyImage());
     }
 }
