@@ -36,7 +36,7 @@ public class LeepsDispatch {
     }
 
     private static void handleSetLookAndFeelException(Exception ex) {
-        System.out.println("app - setLookAndFeel exception - " + ex.getClass().getName());
+
     }
 
     private static void customizeUiComponents() {

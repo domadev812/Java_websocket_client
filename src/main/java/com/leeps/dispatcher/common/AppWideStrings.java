@@ -10,14 +10,14 @@ public interface AppWideStrings {
     //System Property
     public String appSettingsPropertiesFileNameString = "appSettings.properties";
     public String appTitle = "LEEPS Inc. Platform Beta";
-
+    public String imagePath = "http://ec2-34-213-184-150.us-west-2.compute.amazonaws.com/leeps/images/";
     //App Icons
-    public String appIcon1Loc = "../../../Leeps-Icon-1.png";
-    public String appIcon2Loc = "../../../RedBlinkingIcon.png";
+    public String appIcon1Loc = "Leeps-Icon-1.png";
+    public String appIcon2Loc = "RedBlinkingIcon.png";
 
     //Connection Images
-    public String connectedImage = "../../../connected.png";
-    public String offlineImage = "../../../offline.png";
+    public String connectedImage = "connected.png";
+    public String offlineImage = "offline.png";
 
     //Color
     public Color primaryColor = new Color(0x33, 0x33, 0x33);
@@ -26,9 +26,6 @@ public interface AppWideStrings {
     public Color whiteWithTransparentColor = new Color(255, 255, 255, 0);
     public Color profileBackgroundColor = new Color(0x50, 0x50, 0x50);
     public Color lightGray = new Color(0xD3, 0xD3, 0xD3);
-    //Font
-    public String robotoFontBold = "../../../../Roboto-Bold.ttf";
-    public String robotoFontRegular = "../../../../Roboto-Regular.ttf";
 
     // FamFamFamSilkIcons
     public String appFam3IconsLoc = "../../../../FamFamFamSilkIcons/icons/";
@@ -42,7 +39,7 @@ public interface AppWideStrings {
     public String icon_add_new_row = "add.png";
     public String icon_add_new_row_HoverHelpText = "Add new row";
     // Generic Officer Picture
-    public String emptyOfficerProfileImg = "../../../GenericOfficerPic.png";
+    public String emptyOfficerProfileImg = "GenericOfficerPic.png";
 
     // Menu Bar
     public String menuBarDispatcherString = "DISPATCHER";
@@ -117,8 +114,8 @@ public interface AppWideStrings {
     public String officerDepartmentPhoneDataString = "DEPT PHONE";
 
     // Officer Location Map
-    public String mapGotoImage = "../../../../map-goto.png";
-    public String mapLocationImage = "../../../../map-location.png";
+    public String mapGotoImage = "map-goto.png";
+    public String mapLocationImage = "map-location.png";
     public String googleMapsRequestCrossStreetsUrlString =
             "https://maps.googleapis.com/maps/api/geocode/json?latlng=";
     public String crossStreet = "CROSS STREETS:";

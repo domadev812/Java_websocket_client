@@ -3,6 +3,7 @@ package com.leeps.dispatcher.dialogs;
 import com.leeps.dispatcher.common.KeyStrings;
 import com.leeps.dispatcher.material.*;
 import com.leeps.dispatcher.service.AppWideCallsService;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.border.DropShadowBorder;
 import org.jdesktop.swingx.prompt.PromptSupport;
@@ -14,6 +15,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
 public class LoginDialog extends BaseDialog implements ActionListener{
     JPanel contentPane = new JPanel();
@@ -84,7 +87,7 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         gbc_txtEmail.gridy = 0;
         panBody.add(txtEmail, gbc_txtEmail);
         txtEmail.setColumns(10);
-        txtEmail.setFont(common.getRobotoFont().deriveFont(18.0f));
+        txtEmail.setFont(Roboto.BOLD.deriveFont(18.0f));
         txtEmail.setForeground(new Color(130, 130, 130));
         PromptSupport.setPrompt("Email", txtEmail);
         PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, txtEmail);
@@ -98,7 +101,7 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         gbc_txtPassword.gridy = 1;
         panBody.add(txtPassword, gbc_txtPassword);
         txtPassword.setColumns(10);
-        txtPassword.setFont(common.getRobotoFont().deriveFont(18.0f));
+        txtPassword.setFont(Roboto.BOLD.deriveFont(18.0f));
         txtPassword.setForeground(new Color(130, 130, 130));
         PromptSupport.setPrompt("Password", txtPassword);
         PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, txtPassword);
@@ -114,7 +117,11 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         gbc_pan_forgot.gridx = 0;
         gbc_pan_forgot.gridy = 2;
         panBody.add(panForgot, gbc_pan_forgot);
-        lblForgotPassword.setFont(common.getRobotoRegularFontUnderline(10.0f));
+
+        lblForgotPassword.setFont(Roboto.BOLD.deriveFont(12.0f));
+        Map attributes = lblForgotPassword.getFont().getAttributes();
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        lblForgotPassword.setFont(lblForgotPassword.getFont().deriveFont(attributes));
         lblForgotPassword.setForeground(Color.BLACK);
         panForgot.add(lblForgotPassword);
 
@@ -129,8 +136,8 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         panBody.add(panButton, gbc_pane_button);
         panButton.setLayout(new GridLayout(1, 2, 20, 0));
 
-        btnLogin.setFont(common.getRobotoFont().deriveFont(20.0f));
-        btnExit.setFont(common.getRobotoFont().deriveFont(20.0f));
+        btnLogin.setFont(Roboto.BOLD.deriveFont(20.0f));
+        btnExit.setFont(Roboto.BOLD.deriveFont(20.0f));
 
         btnLogin.addActionListener(this);
         btnExit.addActionListener(this);
@@ -147,7 +154,7 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         panBody.add(panError, gbc_pane_error);
 
         panError.add(lblErrorMessage);
-        lblErrorMessage.setFont(common.getRobotoBoldFont(14.0f));
+        lblErrorMessage.setFont(Roboto.BOLD.deriveFont(14.0f));
         lblErrorMessage.setForeground(Color.RED);
 
         JPanel panBottom = new JPanel();
@@ -164,8 +171,11 @@ public class LoginDialog extends BaseDialog implements ActionListener{
         gbl_panBottom.rowWeights = new double[]{0.0};
         panBottom.setLayout(gbl_panBottom);
 
-        lblCreateAccount.setFont(common.getRobotoBoldFontUnderline(14.0f));
+        lblCreateAccount.setFont(Roboto.BOLD.deriveFont(14.0f));
         lblCreateAccount.setForeground(new Color(41, 117, 234));
+        Map attributes1 = lblCreateAccount.getFont().getAttributes();
+        attributes1.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        lblCreateAccount.setFont(lblCreateAccount.getFont().deriveFont(attributes1));
 
         GridBagConstraints gbc_lbl_create = new GridBagConstraints();
         gbc_lbl_create.gridx = 0;

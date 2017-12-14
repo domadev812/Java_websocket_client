@@ -4,12 +4,12 @@
 package com.leeps.dispatcher.panels;
 
 
+import com.leeps.dispatcher.LeepsDispatch;
 import com.leeps.dispatcher.common.*;
 import com.leeps.dispatcher.material.MaterialButton;
-import com.leeps.dispatcher.material.MultiLineLabel;
-import com.leeps.dispatcher.material.Roboto;
 import com.leeps.dispatcher.service.*;
 import de.craften.ui.swingmaterial.MaterialPanel;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.HPos;
@@ -31,10 +31,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -94,9 +92,9 @@ public class OfficerLocationMapPanel extends JPanel {
     private void initImages() {
         try {
             InputStream mapGotoStream = getClass()
-                    .getResourceAsStream(AppWideStrings.mapGotoImage);
+                    .getResourceAsStream("/" + AppWideStrings.mapGotoImage);
             InputStream mapLocationStream = getClass()
-                    .getResourceAsStream(AppWideStrings.mapLocationImage);
+                    .getResourceAsStream("/" + AppWideStrings.mapLocationImage);
             if (mapGotoStream != null) {
                 mapGotoImage = ImageIO.read(mapGotoStream);
             }
@@ -115,10 +113,18 @@ public class OfficerLocationMapPanel extends JPanel {
         fxPanel.setScene(scene);
     }
     private Scene createScene() {
+//        String strPath = LeepsDispatch.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        File file = new File("map.html");
+        URL url = null;
+        try {
+            url = file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         browser = new Browser();
         Scene scene = new Scene(browser, getWidth(), getHeight(), javafx.scene.paint.Color.web("#666970"));
-        URL url = getClass().getResource("../../../../map.html");
-        browser.loadURL(url);
+        if(url != null)
+            browser.loadURL(url);
         return (scene);
     }
     private void buildRow1Panel() {
@@ -337,7 +343,13 @@ public class OfficerLocationMapPanel extends JPanel {
                 }
             });
         }
-        reverseGeocodeCurrentOfficerLocFromXY(lat + ", " + lon);
+
+        Thread threadGetAddress = new Thread(new Runnable() {
+            public void run() {
+                reverseGeocodeCurrentOfficerLocFromXY(lat + ", " + lon);
+            }
+        });
+        threadGetAddress.start();
     }
 
     public void showDurationTime() {
@@ -364,6 +376,7 @@ public class OfficerLocationMapPanel extends JPanel {
 
     private void reverseGeocodeCurrentOfficerLocFromXY(String pXAndYString) {
         String mapThisGeoCodeString = null;
+        System.out.println("Get Location");
         if(!appWideCallsService.isHandled()) return;
         mapThisGeoCodeString = pXAndYString.trim().replaceAll(" ", "");
 
@@ -432,25 +445,14 @@ public class OfficerLocationMapPanel extends JPanel {
                 if ((addressString != null) && (addressString.length() > 0)) {
                     if (index == 0) {
                         fullAddressString = addressString;
-                        System.out.println("Full Address is " + fullAddressString);
 
                     } else if (index == 1) {
                         crossStreetAddressString = addressString;
-                        System.out.println("Cross Street Address is " + crossStreetAddressString);
 
                     } else if (index == 2) {
                         thirdLineAddressString = addressString;
-                        if (addressString.contains("/")) {
-                            System.out.println("Cross Street Address is " + thirdLineAddressString);
-                        } else {
-                            System.out.println("3rd Address is " + thirdLineAddressString);
-                        }
-
                     } else if (addressString.contains("/")) {
                         crossStreetAddressString = addressString;
-                        System.out.println("Cross Street Address is " + crossStreetAddressString);
-                    } else {
-                        System.out.println("Generalized Address is " + addressString);
                     }
                 }
             }

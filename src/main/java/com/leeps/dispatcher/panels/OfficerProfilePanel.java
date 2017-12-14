@@ -15,6 +15,7 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -370,8 +371,8 @@ public class OfficerProfilePanel extends JPanel {
         currentOfficerPicLabel.setIcon(new ImageIcon(pBufferedImage));
     }
 
-    private void loadImageFromURL() {
-        String imageSpecString = "http://ec2-34-213-184-150.us-west-2.compute.amazonaws.com/leeps/images/1513119167.png";
+    private void loadImageFromURL(String fileName) {
+        String imageSpecString = AppWideStrings.imagePath + fileName;
 
         URL url = null;
         try {
@@ -402,14 +403,20 @@ public class OfficerProfilePanel extends JPanel {
         return bimage;
     }
 
-    public void showOfficerProfileUiDataModel(JSONObject handledOfficer) {
+    public void showOfficerProfileUiDataModel(final JSONObject handledOfficer) {
         if (handledOfficer == null) {
             initProfile();
             return;
         }
-
         try {
-            loadImageFromURL();
+
+            final String fileName = handledOfficer.getString(KeyStrings.keyProfileImage);
+            Thread threadConnection = new Thread(new Runnable() {
+                public void run() {
+                    loadImageFromURL(fileName);
+                }
+            });
+            threadConnection.start();
             officerNameDataLabel.setText(handledOfficer.getString(KeyStrings.keyFirstName) + " " + handledOfficer.getString(KeyStrings.keyLastName));
             officerNameDataLabel.setToolTipText(officerNameDataLabel.getText());
 

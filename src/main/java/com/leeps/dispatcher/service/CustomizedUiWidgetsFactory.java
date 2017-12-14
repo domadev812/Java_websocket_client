@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
 
 public class CustomizedUiWidgetsFactory {
 
@@ -201,34 +202,22 @@ public class CustomizedUiWidgetsFactory {
     }
 
     public String readTextFileIntoString(String pDirPathAndFileName) {
-        File readFile;
-        FileInputStream aFileInputStream;
-        ByteArrayOutputStream aByteArrayOutputStream;
-
-        readFile = new File(pDirPathAndFileName);
-
+        InputStream in = getClass().getResourceAsStream("/" + pDirPathAndFileName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String contentLine = null;
+        String content = "";
         try {
-            aFileInputStream = new FileInputStream(readFile);
-            aByteArrayOutputStream = new ByteArrayOutputStream(4000);
-
-            byte[] byteArray = new byte[4000];
-            int readLength;
-
-            while ((readLength = aFileInputStream.read(byteArray)) != -1) {
-                aByteArrayOutputStream.write(byteArray, 0, readLength);
+            contentLine = reader.readLine();
+            content += contentLine + "\n";
+            while (contentLine != null) {
+                contentLine = reader.readLine();
+                content += contentLine + "\n";
             }
-
-            aFileInputStream.close();
-            aByteArrayOutputStream.close();
-
-            return aByteArrayOutputStream.toString();
-
-        } catch (IOException ex) {
-            System.err.println(
-                    "app - readTextFileIntoString() can't read file: " + pDirPathAndFileName);
-            ex.printStackTrace();
-            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        return content;
     }
 
     public void removeAllMouseListeners(JComponent pJComponent) {

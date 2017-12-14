@@ -53,9 +53,7 @@ public class LegalItemsTermsPanel extends JPanel {
         centerDetailTextArea.setFont(Roboto.MEDIUM.deriveFont(16.0f));
         centerDetailTextArea.setForeground(AppWideStrings.whiteColor);
         centerDetailTextArea.setBackground(AppWideStrings.profileBackgroundColor);
-        centerDetailTextArea.setText(customizedUiWidgetsFactory.readTextFileIntoString(
-             AppWideStrings.resourcesTopdownReadFileLoc
-                 + AppWideStrings.legalItemsTermsTextFilename));
+        centerDetailTextArea.setText(customizedUiWidgetsFactory.readTextFileIntoString(AppWideStrings.legalItemsTermsTextFilename));
 
         JScrollPane centerDetailScrollPane = new JScrollPane(centerDetailTextArea);
         centerDetailScrollPane.setHorizontalScrollBarPolicy(

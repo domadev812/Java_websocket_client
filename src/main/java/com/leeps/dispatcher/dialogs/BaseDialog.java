@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import com.leeps.dispatcher.common.*;
 import com.leeps.dispatcher.material.MaterialButton;
+import de.craften.ui.swingmaterial.fonts.Roboto;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -55,11 +56,11 @@ public class BaseDialog extends JDialog implements ActionListener{
 
         btnBack = new MaterialButton("BACK", new Color(41, 117, 234), Color.WHITE, new Color(30, 110, 230));
         btnBack.setBounds(21, 8, 80, 36);
-        btnBack.setFont(common.getRobotoFont().deriveFont(14.0f));
+        btnBack.setFont(Roboto.BOLD.deriveFont(14.0f));
         btnBack.setOpaque(true);
 
         lblTitle.setBounds(0, 0, topPane.getPreferredSize().width, topPane.getPreferredSize().height);
-        lblTitle.setFont(common.getRobotoFont().deriveFont(20.0f));
+        lblTitle.setFont(Roboto.BOLD.deriveFont(20.0f));
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 

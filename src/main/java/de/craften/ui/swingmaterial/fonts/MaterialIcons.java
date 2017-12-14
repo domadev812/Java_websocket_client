@@ -956,25 +956,5 @@ public class MaterialIcons {
             e.printStackTrace();
         }
         return null;
-        //JDK 6 compatible
-//        try {
-//            Font font;
-//            InputStream inputStream = MaterialIcons.class.getResourceAsStream("/fonts/" + resourceName);
-//            font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-//            inputStream.close();
-//            return font;
-//        } catch (Exception e) {
-//            throw new RuntimeException("Could not load " + resourceName, e);
-//        }
     }
-    
-    /*public static void main(String[] args) throws Exception {
-        java.io.BufferedReader in = java.nio.file.Files.newBufferedReader(java.nio.file.Paths.get("codepoints.txt"), java.nio.charset.Charset.defaultCharset());
-        String str;
-        String[] subs;
-        while ((str = in.readLine()) != null) {
-            subs = str.trim().split(" ");
-            System.out.println("    public static final char "+subs[0]+" = '\\u"+subs[1]+"';");
-        }
-    }*/
 }

@@ -65,7 +65,7 @@ public interface KeyStrings {
     String keyLongitude = "lon";
     String keyOfficerHandle = "officer_handle";
     String keyOfficer = "officer";
-
+    String keyProfileImage = "profile_img";
     String keyReportDelayTime = "report_delay_time";
     String keyDelayTime = "delay_time";
     String keyGoodAsk = "good_ask";

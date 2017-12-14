@@ -176,19 +176,4 @@ public class Utils {
     public static Color applyAlphaMask(Color color, int bitMask) {
         return new Color(color.getRGB() & 0x00FFFFFF | (bitMask & 0xFF000000), true);
     }
-    
-    //Uncomment this block in order to test #isDark() against all the color constants in Material Color
-    /*public static void main(String[] args) {
-        Field[] fields = MaterialColor.class.getDeclaredFields();
-        for (Field field:fields) {
-            if (Modifier.isStatic(field.getModifiers()) &&
-                    Color.class.isAssignableFrom(field.getType())) {
-                try {
-                    System.out.println(field.getType().getName()+" "+field.getName()+(isDark((Color)field.get(null)) ? " is dark":" is light"));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }*/
 }

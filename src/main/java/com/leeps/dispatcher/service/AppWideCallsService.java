@@ -274,6 +274,5 @@ public class AppWideCallsService {
                 reportTime, temp);
         officerStatusGraphPanel.addGraphPointOutsideTemp(
                 reportTime, temp);
-        System.out.println(getCurrentTime() + " --- " + "Refresh Graph!!!");
     }
 }

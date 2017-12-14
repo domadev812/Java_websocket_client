@@ -53,8 +53,8 @@ public class AppFrame extends JFrame {
     private BufferedImage officerProfileImage;
     private BufferedImage appIcon1BufferedImage;
     private BufferedImage appIcon2BufferedImage;
-    private ImageIcon connectedImageIcon;
-    private ImageIcon disconnectedImageIcon;
+    private BufferedImage connectedImageIcon;
+    private BufferedImage disconnectedImageIcon;
     private enum WhichAppIcon {
         APP_ICON_1, APP_ICON_2
     }
@@ -103,16 +103,31 @@ public class AppFrame extends JFrame {
 
     //Socket Variables
     private Socket socket;
-    final private String serverIP = "192.168.0.100";
-//    final private String serverIP = "ec2-user@ec2-34-213-184-150.us-west-2.compute.amazonaws.com";
+//    final private String serverIP = "192.168.0.100";
+    final private String serverIP = "ec2-user@ec2-34-213-184-150.us-west-2.compute.amazonaws.com";
     final private int SERVER_PORT = 8120;
 
     public AppFrame() {
         thisAppFrame = this;
-        //setUndecorated(true);
+        setUndecorated(true);
         appWideCallsService = new AppWideCallsService();
         appWideCallsService.setAppFrame(this);
 
+        isConnected = false;
+        isHandled = false;
+        initCustomizedUiWidgetsFactory();
+        initProperties();
+        getIPAddress();
+
+        layoutUI();
+        alarmsPendingDialog = new AlarmsPendingDialog(this, 640, 250, customizedUiWidgetsFactory, appWideCallsService);
+        setContentPane(contentPanel);;
+//        addWindowListener(new FrameWindowListener());
+//        addComponentListener(new FrameResizedListener());
+        setJMenuBar(appMenuBar);
+        setTitle(AppWideStrings.appTitle);
+        makeAppPreferredAppLocationAndSize();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Thread threadConnection = new Thread(new Runnable() {
             public void run() {
@@ -127,24 +142,12 @@ public class AppFrame extends JFrame {
         });
         threadConnection.start();
 
-        isConnected = false;
-        isHandled = false;
-        initCustomizedUiWidgetsFactory();
-        initProperties();
-        getIPAddress();
         loginDialog = new LoginDialog(this, 640, 390, appWideCallsService);
         loginDialog.setVisible(true);
-
-        layoutUI();
-        alarmsPendingDialog = new AlarmsPendingDialog(this, 640, 250, customizedUiWidgetsFactory, appWideCallsService);
-        setContentPane(contentPanel);;
-//        addWindowListener(new FrameWindowListener());
-//        addComponentListener(new FrameResizedListener());
-        setJMenuBar(appMenuBar);
-        setTitle(AppWideStrings.appTitle);
-        makeAppPreferredAppLocationAndSize();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        FrameDragListener frameDragListener = new FrameDragListener(thisAppFrame);
+        thisAppFrame.addMouseListener(frameDragListener);
+        thisAppFrame.addMouseMotionListener(frameDragListener);
+        setResizable(true);
         setVisible(true);
     }
 
@@ -217,11 +220,11 @@ public class AppFrame extends JFrame {
     private void initProperties() {
         Properties aProperties = new Properties();
         InputStream aInputStream = null;
-
         try {
-            aInputStream = new FileInputStream("./resources/" +
+            aInputStream = getClass().getResourceAsStream("/" +
                     AppWideStrings.appSettingsPropertiesFileNameString);
-            aProperties.load(aInputStream);
+            if(aInputStream != null)
+                aProperties.load(aInputStream);
 
         } catch (IOException pEx) {
             pEx.printStackTrace();
@@ -238,12 +241,22 @@ public class AppFrame extends JFrame {
 
     private void initImages() {
         try {
-            InputStream genericOfficerPicInputStream = getClass()
-                    .getResourceAsStream(AppWideStrings.emptyOfficerProfileImg);
+            InputStream genericOfficerPicInputStream = getClass().getResourceAsStream("/" + AppWideStrings.emptyOfficerProfileImg);
             if (genericOfficerPicInputStream != null) {
                 officerProfileImage = ImageIO.read(genericOfficerPicInputStream);
                 officerProfileImage = appWideCallsService.resizeImage(officerProfileImage, 90, 90);
                 officerProfileImage = appWideCallsService.makeRoundedCorner(officerProfileImage, 100);
+            }
+            InputStream connectionImg = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.connectedImage);
+            if (connectionImg != null) {
+                connectedImageIcon = ImageIO.read(connectionImg);
+            }
+
+            InputStream offlineImg = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.offlineImage);
+            if (offlineImg != null) {
+                disconnectedImageIcon = ImageIO.read(offlineImg);
             }
         } catch (IOException ex) {
             System.err.println("app - initImages. Could not read an officer profile picture - "
@@ -254,9 +267,9 @@ public class AppFrame extends JFrame {
 
     private void initAppIcon() {
         try {
-            InputStream imageInputStream1 = getClass().getResourceAsStream(
+            InputStream imageInputStream1 = getClass().getResourceAsStream("/" +
                     AppWideStrings.appIcon1Loc);
-            InputStream imageInputStream2 = getClass().getResourceAsStream(
+            InputStream imageInputStream2 = getClass().getResourceAsStream("/" +
                     AppWideStrings.appIcon2Loc);
             if ((imageInputStream1 != null) && (imageInputStream2 != null)) {
                 appIcon1BufferedImage = ImageIO.read(imageInputStream1);
@@ -275,11 +288,11 @@ public class AppFrame extends JFrame {
     private void changeConnectionState(boolean flag) {
         if(flag) {
             lblConnection.setText(AppWideStrings.socketConnectionString);
-            lblConnectionImage.setIcon(connectedImageIcon);
+            lblConnectionImage.setIcon(new ImageIcon(connectedImageIcon));
         }
         else {
             lblConnection.setText(AppWideStrings.socketDisconnectionString);
-            lblConnectionImage.setIcon(disconnectedImageIcon);
+            lblConnectionImage.setIcon(new ImageIcon(disconnectedImageIcon));
         }
     }
     private void changeDispatcherState() {
@@ -319,8 +332,6 @@ public class AppFrame extends JFrame {
             setState(Frame.NORMAL);
             setTheAppIcon(WhichAppIcon.APP_ICON_1);
             toFront();
-//            appWideCallsService.stopAppIconBlinkingSound();
-
         } else {
             iconBlinkThread = new Thread(new Runnable() {
                 @Override
@@ -330,9 +341,7 @@ public class AppFrame extends JFrame {
                                 && !(iconBlinkThread.isInterrupted())) {
                             try {
                                 setTheAppIcon(WhichAppIcon.APP_ICON_2);
-//                                appWideCallsService.playAppIconBlinkingSound();
                                 Thread.sleep(500);
-
                                 setTheAppIcon(WhichAppIcon.APP_ICON_1);
                                 Thread.sleep(500);
                             } catch (InterruptedException ex) {
@@ -372,8 +381,6 @@ public class AppFrame extends JFrame {
         customizedUiWidgetsFactory = new CustomizedUiWidgetsFactory();
         genericUserImageIcon = customizedUiWidgetsFactory.makeImageIcon(
                 AppWideStrings.icon_generic_user_green);
-        connectedImageIcon = new ImageIcon(getClass().getResource(AppWideStrings.connectedImage));
-        disconnectedImageIcon = new ImageIcon(getClass().getResource(AppWideStrings.offlineImage));
     }
 
     private void applyMenuEffect(final JMenu pJMenu) {
@@ -481,7 +488,7 @@ public class AppFrame extends JFrame {
         handPointingCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
         alarmsPendingButton = new MaterialButton(AppWideStrings.alarmPendingButtonString + howManyAlarmsPending, new Color(0x4F, 0x4F, 0x4F), Color.WHITE, new Color(0x4F, 0x4F, 0x4F));
-        alarmsPendingButton.setFont(common.getRobotoBoldFont(14.0f));
+        alarmsPendingButton.setFont(Roboto.BOLD.deriveFont(14.0f));
         alarmsPendingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pE) {
@@ -658,15 +665,15 @@ public class AppFrame extends JFrame {
     private void buildBottomPanel() {
         lblApplicationStatus.setText(AppWideStrings.applicationAwaitingOfficers);
         lblApplicationStatus.setForeground(Color.WHITE);
-        lblApplicationStatus.setFont(common.getRobotoBoldFont(14.0f));
+        lblApplicationStatus.setFont(Roboto.BOLD.deriveFont(14.0f));
 
         lblConnection.setText(AppWideStrings.socketConnectionString);
         lblConnection.setForeground(Color.WHITE);
-        lblConnection.setFont(common.getRobotoBoldFont(10.0f));
+        lblConnection.setFont(Roboto.BOLD.deriveFont(10.0f));
 
         lblConnectionImage.setForeground(Color.WHITE);
-        lblConnectionImage.setFont(common.getRobotoBoldFont(10.0f));
-        lblConnectionImage.setIcon(connectedImageIcon);
+        lblConnectionImage.setFont(Roboto.BOLD.deriveFont(10.0f));
+        lblConnectionImage.setIcon(new ImageIcon(connectedImageIcon));
 
         JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
         leftButtonPanel.add(lblApplicationStatus);
@@ -691,13 +698,11 @@ public class AppFrame extends JFrame {
     private void buildContentPanel() {
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.add(centerPanel, BorderLayout.CENTER);
-        // contentPaneJPanel.add(topBarPanel, BorderLayout.NORTH);
         contentPanel.add(bottomPanel, BorderLayout.SOUTH);
         showHandledOfficer();
     }
     // UI Component Choose Functions
     public void showHandledOfficer() {
-        System.out.println("Show Officer Profile");
         ((CardLayout) (centerPanel.getLayout())).show(
                 centerPanel, AppWideStrings.centerOfficerPanelCardLayoutKey);
     }
@@ -727,6 +732,7 @@ public class AppFrame extends JFrame {
     public void initLocationData() {
         appWideCallsService.initLocationData();
     }
+
     //Callback Process Functions
     public void logIn(int errorCode, JSONObject jsonObject)     //Login CallBack
     {
@@ -835,5 +841,28 @@ public class AppFrame extends JFrame {
         });
 
         socket.connect();
+    }
+
+    public class FrameDragListener extends MouseAdapter {
+
+        private final JFrame frame;
+        private Point mouseDownCompCoords = null;
+
+        public FrameDragListener(JFrame frame) {
+            this.frame = frame;
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            mouseDownCompCoords = null;
+        }
+
+        public void mousePressed(MouseEvent e) {
+            mouseDownCompCoords = e.getPoint();
+        }
+
+        public void mouseDragged(MouseEvent e) {
+            Point currCoords = e.getLocationOnScreen();
+            frame.setLocation(currCoords.x - mouseDownCompCoords.x, currCoords.y - mouseDownCompCoords.y);
+        }
     }
 }

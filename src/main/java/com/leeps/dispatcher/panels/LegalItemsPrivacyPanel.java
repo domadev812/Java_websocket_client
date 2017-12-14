@@ -51,9 +51,7 @@ public class LegalItemsPrivacyPanel extends JPanel {
         centerDetailTextArea.setFont(Roboto.MEDIUM.deriveFont(16.0f));
         centerDetailTextArea.setForeground(AppWideStrings.whiteColor);
         centerDetailTextArea.setBackground(AppWideStrings.profileBackgroundColor);
-        centerDetailTextArea.setText(customizedUiWidgetsFactory.readTextFileIntoString(
-            AppWideStrings.resourcesTopdownReadFileLoc +
-                AppWideStrings.legalItemsPrivacyTextFilename));
+        centerDetailTextArea.setText(customizedUiWidgetsFactory.readTextFileIntoString(AppWideStrings.legalItemsPrivacyTextFilename));
 
         JScrollPane centerDetailScrollPane = new JScrollPane(centerDetailTextArea);
         centerDetailScrollPane.setHorizontalScrollBarPolicy(

@@ -178,7 +178,7 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
         dispatcherStationNameComboBox.setBackground(Color.WHITE);
 
         dispatchStreetAddressLabel = new JLabel(AppWideStrings.streetString);
-        dispatchStreetAddressLabel.setFont(common.getRobotoBoldFont(12.0f));
+        dispatchStreetAddressLabel.setFont(Roboto.BOLD.deriveFont(12.0f));
         dispatchStreetAddressLabel.setBackground(Color.WHITE);
         dispatchStreetAddressLabel.setOpaque(true);
         dispatchStreetAddressLabel.setBorder(new EmptyBorder(1, 20, 1, 20));
@@ -493,7 +493,6 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
 
         if(!dispatcherFlag) {
             jsonDispatch = appWideCallsService.getDispatcher();
-            System.out.println(jsonDispatch);
             try {
                 dispatcherID = jsonDispatch.getInt(KeyStrings.keyID);
             } catch (JSONException e) {
@@ -646,13 +645,11 @@ public class DispatcherProfileDialog extends BaseDialog implements ActionListene
             } else {
                 alertLabel.setText("");
                 saveDepartInfos();
-                System.out.println("Saved");
             }
 
         } else {
             alertLabel.setText(
                     AppWideStrings.dispatchOperatorAllFieldsMustBeFilledIn);
-            System.out.println("Blank Rows");
         }
     }
 
