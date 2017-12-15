@@ -18,6 +18,12 @@ public interface AppWideStrings {
     //Connection Images
     public String connectedImage = "connected.png";
     public String offlineImage = "offline.png";
+    public String closeNomralImg = "btn_close_normal.png";
+    public String closeHoverImg = "btn_close_hover.png";
+    public String minimizeNormalImg = "btn_minimize_normal.png";
+    public String minimizeHoverImg = "btn_minimize_hover.png";
+    public String maximizeNormalImg = "btn_maximize_normal.png";
+    public String maximizeHoverImg = "btn_maximize_hover.png";
 
     //Color
     public Color primaryColor = new Color(0x33, 0x33, 0x33);

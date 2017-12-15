@@ -38,6 +38,7 @@ public class AppFrame extends JFrame {
     private JSONObject dispatcherProfile = new JSONObject();
     JSONObject handledOfficer = null;
     boolean isHandled;
+    boolean windowFlag = false;
     double lat = 40.126936, lon = 124.394631;
     boolean isConnected;
     private String ipAddress = "";
@@ -55,6 +56,13 @@ public class AppFrame extends JFrame {
     private BufferedImage appIcon2BufferedImage;
     private BufferedImage connectedImageIcon;
     private BufferedImage disconnectedImageIcon;
+    private BufferedImage windowCloseNormalImg;
+    private BufferedImage windowMinimizeNormalImg;
+    private BufferedImage windowMaximizeNormalImg;
+    private BufferedImage windowCloseHoverImg;
+    private BufferedImage windowMinimizeHoverImg;
+    private BufferedImage windowMaximizeHoverImg;
+
     private enum WhichAppIcon {
         APP_ICON_1, APP_ICON_2
     }
@@ -103,8 +111,8 @@ public class AppFrame extends JFrame {
 
     //Socket Variables
     private Socket socket;
-//    final private String serverIP = "192.168.0.100";
-    final private String serverIP = "ec2-user@ec2-34-213-184-150.us-west-2.compute.amazonaws.com";
+    final private String serverIP = "192.168.0.100";
+//    final private String serverIP = "ec2-user@ec2-34-213-184-150.us-west-2.compute.amazonaws.com";
     final private int SERVER_PORT = 8120;
 
     public AppFrame() {
@@ -258,6 +266,42 @@ public class AppFrame extends JFrame {
             if (offlineImg != null) {
                 disconnectedImageIcon = ImageIO.read(offlineImg);
             }
+
+            InputStream closeNormalImage = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.closeNomralImg);
+            if (closeNormalImage != null) {
+                windowCloseNormalImg = ImageIO.read(closeNormalImage);
+            }
+
+            InputStream minimizeNormalImg = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.minimizeNormalImg);
+            if (minimizeNormalImg != null) {
+                windowMinimizeNormalImg = ImageIO.read(minimizeNormalImg);
+            }
+
+            InputStream maximizeNormalImg = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.maximizeNormalImg);
+            if (maximizeNormalImg != null) {
+                windowMaximizeNormalImg = ImageIO.read(maximizeNormalImg);
+            }
+
+            InputStream closeHoverImage = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.closeHoverImg);
+            if (closeHoverImage != null) {
+                windowCloseHoverImg = ImageIO.read(closeHoverImage);
+            }
+
+            InputStream minimizeHoverImg = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.minimizeHoverImg);
+            if (minimizeHoverImg != null) {
+                windowMinimizeHoverImg = ImageIO.read(minimizeHoverImg);
+            }
+
+            InputStream maximizeHoverImg = getClass()
+                    .getResourceAsStream("/" + AppWideStrings.maximizeHoverImg);
+            if (maximizeHoverImg != null) {
+                windowMaximizeHoverImg = ImageIO.read(maximizeHoverImg);
+            }
         } catch (IOException ex) {
             System.err.println("app - initImages. Could not read an officer profile picture - "
                     + ex.getMessage());
@@ -407,8 +451,8 @@ public class AppFrame extends JFrame {
 
     // UI Component Build Functions
     private void layoutUI() {
-        buildMenuBar();
         initImages();
+        buildMenuBar();
         initAppIcon();
         setTheAppIcon(WhichAppIcon.APP_ICON_1);
         buildCenterPanel();
@@ -438,7 +482,7 @@ public class AppFrame extends JFrame {
             }
         };
 
-        appMenuBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        appMenuBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         dispatcherProfileMenu = new JMenu(AppWideStrings.menuBarDispatcherString);
 
         BaseMenuItem itemManage = new BaseMenuItem("MANAGE STATION");
@@ -498,11 +542,19 @@ public class AppFrame extends JFrame {
         });
 
         JPanel menuAlarmPendingPanel = new JPanel(
-                new FlowLayout(FlowLayout.RIGHT, 0, 5));
+                new FlowLayout(FlowLayout.RIGHT, 15, 5));
         menuAlarmPendingPanel.setBackground(AppWideStrings.primaryColor);
         menuAlarmPendingPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         menuAlarmPendingPanel.add(Box.createHorizontalStrut(8));
+
+        HoverImage imgMinimize = new HoverImage(windowMinimizeNormalImg, windowMinimizeHoverImg);
+        HoverImage imgMaximize = new HoverImage(windowMaximizeNormalImg, windowMaximizeHoverImg);
+        HoverImage imgClose = new HoverImage(windowCloseNormalImg, windowCloseHoverImg);
+
         menuAlarmPendingPanel.add(alarmsPendingButton);
+        menuAlarmPendingPanel.add(imgMinimize);
+        menuAlarmPendingPanel.add(imgMaximize);
+        menuAlarmPendingPanel.add(imgClose);
 
         appMenuBar.add(dispatcherProfileMenu);
         appMenuBar.add(windowMenu);
@@ -594,6 +646,34 @@ public class AppFrame extends JFrame {
                 ((CardLayout) (centerPanel.getLayout())).show(
                         centerPanel, AppWideStrings.centerPanelLegalItemsFAQCardLayoutKey);
                 legalItemsFAQPanel.scrollToTop();
+            }
+        });
+
+        imgMinimize.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                windowFlag = false;
+                thisAppFrame.setExtendedState(thisAppFrame.getExtendedState() | JFrame.ICONIFIED);
+            }
+        });
+
+        imgMaximize.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                if(!windowFlag) {
+                    windowFlag = true;
+                    thisAppFrame.setExtendedState(thisAppFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+                } else {
+                    windowFlag = false;
+                    thisAppFrame.setExtendedState(Frame.NORMAL);
+                }
+            }
+        });
+
+        imgClose.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent pE) {
+                System.exit(0);
             }
         });
     }
@@ -862,7 +942,31 @@ public class AppFrame extends JFrame {
 
         public void mouseDragged(MouseEvent e) {
             Point currCoords = e.getLocationOnScreen();
+            if(mouseDownCompCoords == null) return;
+            if(currCoords == null) return;
             frame.setLocation(currCoords.x - mouseDownCompCoords.x, currCoords.y - mouseDownCompCoords.y);
+        }
+    }
+
+    public class HoverImage extends JLabel {
+        public final BufferedImage normalImg, hoverImg;
+        public HoverImage(BufferedImage img1, BufferedImage img2) {
+            this.normalImg = img1;
+            this.hoverImg = img2;
+            setIcon(new ImageIcon(normalImg));
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent pE) {
+                    super.mouseEntered(pE);
+                    setIcon(new ImageIcon(hoverImg));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent pE) {
+                    super.mouseExited(pE);
+                    setIcon(new ImageIcon(normalImg));
+                }
+            });
         }
     }
 }
